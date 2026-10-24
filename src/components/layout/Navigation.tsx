@@ -54,9 +54,11 @@ export const Navigation: React.FC<NavigationProps> = ({ currentTab, onSelectTab 
       <header className="hidden sm:block sticky top-0 z-40 bg-card/95 backdrop-blur-md border-b border-border shadow-subtle">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-emerald-400 flex items-center justify-center text-white shadow-sm font-bold text-lg">
-              L
-            </div>
+            <img
+              src="/icons/icon-192.png"
+              alt="LifeOS App Icon"
+              className="w-9 h-9 rounded-xl shadow-sm border border-emerald-500/20"
+            />
             <div>
               <span className="font-extrabold tracking-tight text-lg text-foreground">
                 LifeOS

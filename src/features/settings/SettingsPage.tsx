@@ -434,7 +434,26 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
       {/* Privacy and App Information */}
       <Card className="p-4 space-y-3 bg-secondary/30 border border-emerald-500/20">
-        <div className="flex items-center gap-2 text-foreground font-bold text-xs">
+        <div className="flex items-center gap-3 pb-2 border-b border-border/40">
+          <img
+            src="/icons/icon-192.png"
+            alt="LifeOS App Icon"
+            className="w-12 h-12 rounded-2xl shadow-md border border-emerald-500/20 shrink-0"
+          />
+          <div>
+            <div className="flex items-center gap-1.5 font-extrabold text-foreground text-sm">
+              LifeOS
+              <span className="text-[10px] bg-emerald-500/15 text-emerald-500 font-bold px-1.5 py-0.5 rounded-md border border-emerald-500/20">
+                PWA
+              </span>
+            </div>
+            <span className="text-[11px] text-muted-foreground block">
+              Habit Tracker & Personal Expense Manager
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 text-foreground font-bold text-xs pt-1">
           <ShieldCheck className="w-4 h-4 text-emerald-500" />
           100% Local Storage & Privacy Assurance
         </div>

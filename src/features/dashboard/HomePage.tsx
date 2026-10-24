@@ -147,13 +147,20 @@ export const HomePage: React.FC<HomePageProps> = ({
     <div className="space-y-6 pb-20">
       {/* SECTION A: HEADER */}
       <div className="flex items-center justify-between">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-primary block">
-            {formatDisplayDate(todayStr, 'EEEE, dd MMMM yyyy')}
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-            {greeting}!
-          </h1>
+        <div className="flex items-center gap-3">
+          <img
+            src="/icons/icon-192.png"
+            alt="LifeOS App Icon"
+            className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl shadow-subtle border border-emerald-500/25 shrink-0"
+          />
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+              {formatDisplayDate(todayStr, 'EEEE, dd MMMM yyyy')}
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+              {greeting}!
+            </h1>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -175,9 +182,11 @@ export const HomePage: React.FC<HomePageProps> = ({
       {isBrandNewUser && (
         <Card className="p-6 bg-gradient-to-br from-card via-card to-primary/5 border-primary/20 space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-primary/15 text-primary flex items-center justify-center font-bold">
-              <Sparkles className="w-6 h-6" />
-            </div>
+            <img
+              src="/icons/icon-192.png"
+              alt="LifeOS"
+              className="w-12 h-12 rounded-2xl shadow-sm border border-emerald-500/25 shrink-0"
+            />
             <div>
               <h3 className="text-base font-bold text-foreground">Welcome to LifeOS</h3>
               <p className="text-xs text-muted-foreground mt-0.5">

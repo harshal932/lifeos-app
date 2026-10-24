@@ -143,10 +143,12 @@ export const App: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-        <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary font-black text-xl animate-pulse">
-          L
-        </div>
-        <span className="text-xs text-muted-foreground mt-3 font-semibold tracking-wider uppercase">
+        <img
+          src="/icons/icon-192.png"
+          alt="LifeOS"
+          className="w-16 h-16 rounded-2xl shadow-elevated animate-pulse border border-emerald-500/30 mb-2"
+        />
+        <span className="text-xs text-muted-foreground mt-2 font-semibold tracking-wider uppercase">
           Initializing LifeOS...
         </span>
       </div>
