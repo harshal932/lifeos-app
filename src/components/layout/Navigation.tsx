@@ -1,7 +1,7 @@
 import React from 'react';
-import { Home, CheckCircle2, Wallet, BarChart3, Settings } from 'lucide-react';
+import { Home, CheckCircle2, Wallet, BarChart3, Settings, BookA } from 'lucide-react';
 
-export type TabType = 'home' | 'habits' | 'finance' | 'insights' | 'settings';
+export type TabType = 'home' | 'habits' | 'finance' | 'vocabulary' | 'insights' | 'settings';
 
 interface NavigationProps {
   currentTab: TabType;
@@ -10,11 +10,12 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({ currentTab, onSelectTab }) => {
   const tabs = [
-    { id: 'home' as TabType, label: 'Home', icon: Home },
-    { id: 'habits' as TabType, label: 'Habits', icon: CheckCircle2 },
-    { id: 'finance' as TabType, label: 'Finance', icon: Wallet },
-    { id: 'insights' as TabType, label: 'Insights', icon: BarChart3 },
-    { id: 'settings' as TabType, label: 'Settings', icon: Settings },
+    { id: 'home' as TabType, label: 'Home', desktopLabel: 'Home', icon: Home },
+    { id: 'habits' as TabType, label: 'Habits', desktopLabel: 'Habits', icon: CheckCircle2 },
+    { id: 'finance' as TabType, label: 'Finance', desktopLabel: 'Finance', icon: Wallet },
+    { id: 'vocabulary' as TabType, label: 'Vocab', desktopLabel: 'English Vocabulary', icon: BookA },
+    { id: 'insights' as TabType, label: 'Insights', desktopLabel: 'Insights', icon: BarChart3 },
+    { id: 'settings' as TabType, label: 'Settings', desktopLabel: 'Settings', icon: Settings },
   ];
 
   return (
@@ -84,7 +85,7 @@ export const Navigation: React.FC<NavigationProps> = ({ currentTab, onSelectTab 
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span>{tab.label}</span>
+                  <span>{tab.desktopLabel || tab.label}</span>
                 </button>
               );
             })}

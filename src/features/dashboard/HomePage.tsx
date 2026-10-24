@@ -37,6 +37,7 @@ import {
 import { calculateCashFlow, formatINR } from '../../utils/currency';
 import { isHabitScheduledOn } from '../../utils/streaks';
 import { completeHabit, undoHabitCompletion } from '../../services/habitService';
+import { getWordOfTheDay } from '../../services/vocabService';
 import { subDays } from 'date-fns';
 
 interface HomePageProps {
@@ -71,6 +72,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   const today = new Date();
   const todayStr = getLocalDateString(today);
   const greeting = getTimeBasedGreeting(today);
+  const wotd = getWordOfTheDay(todayStr);
 
   // Active habits
   const activeHabits = habits.filter((h) => !h.isArchived);
@@ -262,6 +264,40 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
             <span className="text-[11px] font-semibold text-foreground leading-tight">Set Budget</span>
           </button>
+        </div>
+      </div>
+
+      {/* SECTION: ENGLISH VOCABULARY WORD OF THE DAY */}
+      <div
+        onClick={() => onSelectTab('vocabulary')}
+        className="cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-950/60 via-slate-900 to-card border border-indigo-500/30 p-4 transition-all duration-200 hover:border-indigo-500/60 shadow-subtle flex items-center justify-between"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
+                Word of the Day
+              </span>
+              <span className="text-[10px] text-muted-foreground font-mono">
+                English Vocabulary
+              </span>
+            </div>
+            <div className="flex items-baseline gap-2 mt-0.5">
+              <span className="font-extrabold text-foreground text-base tracking-tight group-hover:text-indigo-300 transition-colors">
+                {wotd.word}
+              </span>
+              <span className="text-xs text-amber-300 font-devanagari font-bold">
+                — {wotd.marathiMeaning}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-1 text-xs font-semibold text-indigo-400 group-hover:translate-x-1 transition-transform">
+          <span>Learn</span>
+          <ChevronRight className="w-4 h-4" />
         </div>
       </div>
 

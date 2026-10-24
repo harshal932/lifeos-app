@@ -272,6 +272,33 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
         </div>
 
+        {/* Daily English Vocabulary Goal */}
+        <div className="pt-2 border-t border-border/40 space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <div>
+              <span className="font-bold text-foreground block">Daily English Vocabulary Goal</span>
+              <span className="text-[11px] text-muted-foreground">
+                Target words to learn and practice each day
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {[3, 5, 10, 15].map((count) => (
+                <button
+                  key={count}
+                  onClick={() => onUpdateSettings({ dailyVocabGoal: count })}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                    (settings.dailyVocabGoal || 5) === count
+                      ? 'bg-primary text-primary-foreground shadow-xs'
+                      : 'bg-secondary text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {count}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Monthly Savings Goal */}
         <div className="pt-2 border-t border-border/40 space-y-1.5">
           <label className="block text-xs font-bold text-foreground">

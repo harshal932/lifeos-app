@@ -81,6 +81,94 @@ export interface UserHoldings {
   updatedAt?: string;
 }
 
+export type VocabDifficulty = 'beginner' | 'intermediate' | 'advanced';
+export type VocabLearningStatus = 'new' | 'learning' | 'needs_revision' | 'mastered';
+
+export interface VocabExample {
+  english: string;
+  marathi: string;
+  sentence: string;
+  marathiTranslation: string;
+}
+
+export interface VocabWord {
+  id: string;
+  word: string;
+  partOfSpeech: string;
+  simpleMeaning: string;
+  meaning: string;
+  marathiMeaning: string;
+  pronunciation: string;
+  examples: VocabExample[];
+  synonyms: string[];
+  antonyms: string[];
+  difficulty: VocabDifficulty;
+}
+
+export interface VocabProgress {
+  wordId: string;
+  status: VocabLearningStatus;
+  isBookmarked: boolean;
+  personalNotes?: string;
+  notes?: string;
+  attempts?: number;
+  attemptCount: number;
+  correctCount: number;
+  incorrectCount: number;
+  consecutiveSuccess: number;
+  introducedDate: string; // YYYY-MM-DD
+  lastReviewedAt?: string; // ISO string
+  lastRevisionDate?: string;
+  nextReviewDate?: string; // YYYY-MM-DD
+}
+
+export type VocabQuizCategory = 'today' | 'previous' | 'all_learned' | 'all' | 'saved' | 'difficult' | 'mixed';
+export type VocabQuizDifficulty = VocabDifficulty | 'mixed';
+export type VocabQuizQuestionType =
+  | 'en_to_mr'
+  | 'mr_to_en'
+  | 'fill_blank'
+  | 'synonym_antonym'
+  | 'complete_sentence'
+  | 'mixed';
+
+export interface VocabQuizQuestion {
+  id: string;
+  wordId: string;
+  question: string;
+  questionType: VocabQuizQuestionType;
+  options: string[];
+  correctAnswer: string;
+  explanation: string;
+  example?: string;
+}
+
+export interface VocabQuizResult {
+  id: string;
+  date: string; // YYYY-MM-DD
+  completedAt: string; // ISO string
+  category: VocabQuizCategory;
+  difficulty: VocabQuizDifficulty;
+  totalQuestions: number;
+  score: number;
+  percentage: number;
+  correctAnswers?: number;
+  incorrectAnswers?: number;
+  scorePercentage?: number;
+  questions: VocabQuizQuestion[];
+  userAnswers: Record<string, string>;
+  incorrectWordIds: string[];
+  questionDetails?: Array<{
+    question: string;
+    selectedAnswer: string;
+    correctAnswer: string;
+    isCorrect: boolean;
+    word: string;
+    marathiMeaning: string;
+    explanation: string;
+  }>;
+}
+
 export interface AppSettings {
   id: string; // 'current'
   theme: 'light' | 'dark' | 'system';
@@ -96,6 +184,7 @@ export interface AppSettings {
   paymentMethods: string[];
   budgetWarningThresholds: number[];
   holdings?: UserHoldings;
+  dailyVocabGoal?: number; // default: 5
 }
 
 export interface HabitStreakStats {
@@ -117,4 +206,6 @@ export interface BackupData {
   studySessions: StudySession[];
   journalEntries: JournalEntry[];
   settings: AppSettings;
+  vocabProgress?: VocabProgress[];
+  vocabQuizHistory?: VocabQuizResult[];
 }

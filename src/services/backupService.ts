@@ -15,6 +15,8 @@ export async function exportBackup(): Promise<{ filename: string; jsonString: st
     studySessions,
     journalEntries,
     settings,
+    vocabProgress,
+    vocabQuizHistory,
   ] = await Promise.all([
     db.habits.toArray(),
     db.habitCompletions.toArray(),
@@ -23,6 +25,8 @@ export async function exportBackup(): Promise<{ filename: string; jsonString: st
     db.studySessions.toArray(),
     db.journalEntries.toArray(),
     db.settings.get('current'),
+    db.vocabProgress.toArray(),
+    db.vocabQuizHistory.toArray(),
   ]);
 
   const backupData: BackupData = {
@@ -35,6 +39,8 @@ export async function exportBackup(): Promise<{ filename: string; jsonString: st
     studySessions,
     journalEntries,
     settings: settings || ({} as AppSettings),
+    vocabProgress,
+    vocabQuizHistory,
   };
 
   const jsonString = JSON.stringify(backupData, null, 2);
@@ -160,6 +166,8 @@ export async function restoreBackup(
       db.studySessions,
       db.journalEntries,
       db.settings,
+      db.vocabProgress,
+      db.vocabQuizHistory,
     ],
     async () => {
       if (mode === 'replace') {
@@ -170,6 +178,8 @@ export async function restoreBackup(
           db.budgets.clear(),
           db.studySessions.clear(),
           db.journalEntries.clear(),
+          db.vocabProgress.clear(),
+          db.vocabQuizHistory.clear(),
         ]);
       }
 
@@ -203,6 +213,16 @@ export async function restoreBackup(
         await db.journalEntries.bulkPut(backup.journalEntries);
       }
 
+      // Add or put vocabulary progress
+      if (backup.vocabProgress?.length) {
+        await db.vocabProgress.bulkPut(backup.vocabProgress);
+      }
+
+      // Add or put vocabulary quiz history
+      if (backup.vocabQuizHistory?.length) {
+        await db.vocabQuizHistory.bulkPut(backup.vocabQuizHistory);
+      }
+
       // Settings
       if (backup.settings && backup.settings.id) {
         await db.settings.put(backup.settings);
@@ -224,6 +244,8 @@ export async function resetAllData(): Promise<void> {
       db.budgets,
       db.studySessions,
       db.journalEntries,
+      db.vocabProgress,
+      db.vocabQuizHistory,
     ],
     async () => {
       await Promise.all([
@@ -233,6 +255,8 @@ export async function resetAllData(): Promise<void> {
         db.budgets.clear(),
         db.studySessions.clear(),
         db.journalEntries.clear(),
+        db.vocabProgress.clear(),
+        db.vocabQuizHistory.clear(),
       ]);
     }
   );

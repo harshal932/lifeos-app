@@ -16,6 +16,7 @@ import { HabitsPage } from './features/habits/HabitsPage';
 import { FinancePage } from './features/finance/FinancePage';
 import { InsightsPage } from './features/insights/InsightsPage';
 import { SettingsPage } from './features/settings/SettingsPage';
+import { VocabularyPage } from './features/vocabulary/VocabularyPage';
 import { AddEditHabitModal } from './features/habits/AddEditHabitModal';
 import { AddEditTransactionModal } from './features/finance/AddEditTransactionModal';
 import { BudgetModal } from './features/budgets/BudgetModal';
@@ -202,6 +203,10 @@ export const App: React.FC = () => {
             onUpdateHoldings={(holdings) => handleUpdateSettings({ holdings })}
             onRefresh={refreshData}
           />
+        )}
+
+        {currentTab === 'vocabulary' && (
+          <VocabularyPage settings={settings} />
         )}
 
         {currentTab === 'insights' && (

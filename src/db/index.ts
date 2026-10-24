@@ -84,6 +84,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     savedPaise: 0,
     updatedAt: new Date().toISOString(),
   },
+  dailyVocabGoal: 5,
 };
 
 export class LifeOSDatabase extends Dexie {
@@ -94,6 +95,8 @@ export class LifeOSDatabase extends Dexie {
   studySessions!: Table<StudySession, string>;
   journalEntries!: Table<JournalEntry, string>;
   settings!: Table<AppSettings, string>;
+  vocabProgress!: Table<import('../types').VocabProgress, string>;
+  vocabQuizHistory!: Table<import('../types').VocabQuizResult, string>;
 
   constructor() {
     super('LifeOSDB');
@@ -106,6 +109,11 @@ export class LifeOSDatabase extends Dexie {
       studySessions: 'id, subject, date, completed',
       journalEntries: 'id, date',
       settings: 'id',
+    });
+
+    this.version(2).stores({
+      vocabProgress: 'wordId, status, isBookmarked, introducedDate, nextReviewDate',
+      vocabQuizHistory: 'id, date, category, completedAt',
     });
 
     this.on('populate', async () => {
