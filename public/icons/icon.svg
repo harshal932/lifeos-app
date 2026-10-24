@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#090d16" />
+    </linearGradient>
+    <linearGradient id="accentGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#6366f1" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#bg)" />
+  <rect width="504" height="504" x="4" y="4" rx="124" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4" />
+  
+  <g filter="url(#shadow)" transform="translate(64, 64) scale(0.75)">
+    <!-- Outer ring progress arc -->
+    <circle cx="256" cy="256" r="200" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="28" />
+    <circle cx="256" cy="256" r="200" fill="none" stroke="url(#accentGlow)" stroke-width="28" stroke-dasharray="1256" stroke-dashoffset="380" stroke-linecap="round" transform="rotate(-90 256 256)" />
+    
+    <!-- Central stylized L & Pulse / Flame motif -->
+    <path d="M 190 140 L 190 340 L 320 340" fill="none" stroke="#ffffff" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M 270 210 L 310 250 L 370 170" fill="none" stroke="#10b981" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>
