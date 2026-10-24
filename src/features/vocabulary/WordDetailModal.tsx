@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button } from '../../components/common/Button';
 import { VocabWord, VocabProgress, VocabLearningStatus } from '../../types';
 import { speakWord, isSpeechSupported } from '../../utils/speech';
 import { toggleBookmark, updateWordNotes, updateWordStatus } from '../../services/vocabService';
@@ -71,32 +72,35 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
   };
 
   const difficultyColors = {
-    beginner: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    intermediate: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    beginner: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+    intermediate: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
     advanced: 'bg-purple-500/10 text-purple-400 border-purple-500/20'
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 text-white my-8 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-background/80 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl bg-card text-card-foreground border-t sm:border border-border/80 rounded-t-3xl sm:rounded-3xl shadow-elevated p-5 sm:p-7 max-h-[92vh] overflow-y-auto my-0 sm:my-8 animate-in slide-in-from-bottom-5 duration-200">
+        {/* Mobile handle */}
+        <div className="sm:hidden w-12 h-1.5 bg-muted-foreground/25 rounded-full mx-auto -mt-1 mb-4" />
+
         {/* Header */}
-        <div className="flex items-start justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-start justify-between border-b border-border/50 pb-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${difficultyColors[word.difficulty]}`}>
+            <div className="flex items-center gap-2 mb-1.5">
+              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${difficultyColors[word.difficulty]}`}>
                 {word.difficulty.toUpperCase()}
               </span>
-              <span className="text-xs text-slate-400 italic font-mono bg-slate-800/80 px-2 py-0.5 rounded">
+              <span className="text-xs text-muted-foreground italic font-mono bg-secondary px-2 py-0.5 rounded-lg">
                 {word.partOfSpeech}
               </span>
             </div>
             <div className="flex items-center gap-3">
-              <h2 className="text-3xl font-bold tracking-tight text-white">{word.word}</h2>
+              <h2 className="text-3xl font-black tracking-tight text-foreground">{word.word}</h2>
               {speechAvailable && (
                 <button
                   onClick={() => handlePlayAudio(word.word)}
                   disabled={isPlayingAudio}
-                  className="p-2 rounded-full bg-indigo-500/20 text-indigo-400 hover:bg-indigo-500/30 transition-colors"
+                  className="p-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95"
                   title="Listen pronunciation"
                 >
                   <Volume2 className="w-5 h-5" />
@@ -104,17 +108,17 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
               )}
             </div>
             {word.pronunciation && (
-              <p className="text-sm font-mono text-indigo-400 mt-1">/{word.pronunciation}/</p>
+              <p className="text-sm font-mono text-primary/80 mt-1">/{word.pronunciation}/</p>
             )}
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleToggleBookmark}
-              className={`p-2.5 rounded-xl border transition-colors ${
+              className={`p-2.5 rounded-2xl border transition-all active:scale-90 ${
                 isBookmarked
-                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-                  : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                  ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                  : 'bg-secondary text-muted-foreground border-border/80 hover:text-foreground'
               }`}
               title={isBookmarked ? 'Remove Bookmark' : 'Bookmark Word'}
             >
@@ -122,7 +126,7 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
             </button>
             <button
               onClick={onClose}
-              className="p-2.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white border border-slate-700"
+              className="p-2.5 rounded-2xl bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground border border-border/80 transition-all active:scale-90"
             >
               <X className="w-5 h-5" />
             </button>
@@ -130,40 +134,40 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
         </div>
 
         {/* Marathi & English Meanings */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60">
-            <div className="flex items-center gap-2 text-xs font-medium text-indigo-400 uppercase tracking-wider mb-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-5">
+          <div className="p-4 rounded-2xl bg-secondary/50 border border-border/60">
+            <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
               <Sparkles className="w-4 h-4" /> Marathi Meaning (मराठी अर्थ)
             </div>
-            <p className="text-2xl font-bold text-amber-300 font-devanagari">{word.marathiMeaning}</p>
+            <p className="text-2xl font-bold text-amber-500 dark:text-amber-300 font-devanagari">{word.marathiMeaning}</p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-800/60 border border-slate-700/60">
-            <div className="flex items-center gap-2 text-xs font-medium text-indigo-400 uppercase tracking-wider mb-1">
+          <div className="p-4 rounded-2xl bg-secondary/50 border border-border/60">
+            <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
               <BookOpen className="w-4 h-4" /> English Meaning
             </div>
-            <p className="text-base text-slate-200">{word.meaning}</p>
+            <p className="text-sm sm:text-base text-foreground font-medium">{word.meaning}</p>
           </div>
         </div>
 
         {/* Examples Section */}
         <div className="space-y-3 mb-5">
-          <h3 className="text-sm font-semibold uppercase text-slate-400 tracking-wider">Practical Examples</h3>
+          <h3 className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Practical Examples</h3>
           {word.examples.map((ex, idx) => (
-            <div key={idx} className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-800 space-y-1.5">
+            <div key={idx} className="p-3.5 rounded-2xl bg-secondary/30 border border-border/50 space-y-1.5">
               <div className="flex items-start justify-between gap-2">
-                <p className="text-sm font-medium text-slate-100 italic">"{ex.sentence}"</p>
+                <p className="text-sm font-semibold text-foreground italic">"{ex.sentence}"</p>
                 {speechAvailable && (
                   <button
                     onClick={() => handlePlayAudio(ex.sentence)}
-                    className="p-1 rounded text-slate-400 hover:text-indigo-400 transition-colors flex-shrink-0"
+                    className="p-1 rounded text-muted-foreground hover:text-primary transition-colors flex-shrink-0"
                     title="Pronounce sentence"
                   >
                     <Volume2 className="w-4 h-4" />
                   </button>
                 )}
               </div>
-              <p className="text-sm text-amber-200/90 font-devanagari">मराठी: {ex.marathiTranslation}</p>
+              <p className="text-xs sm:text-sm text-amber-600 dark:text-amber-200/90 font-devanagari font-medium">मराठी: {ex.marathiTranslation}</p>
             </div>
           ))}
         </div>
@@ -173,10 +177,10 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             {word.synonyms.length > 0 && (
               <div>
-                <span className="text-xs font-semibold uppercase text-slate-400 block mb-2">Synonyms (समानार्थी)</span>
+                <span className="text-xs font-bold uppercase text-muted-foreground block mb-2">Synonyms (समानार्थी)</span>
                 <div className="flex flex-wrap gap-1.5">
                   {word.synonyms.map((s, i) => (
-                    <span key={i} className="px-2.5 py-1 text-xs rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                    <span key={i} className="px-2.5 py-1 text-xs rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-medium">
                       {s}
                     </span>
                   ))}
@@ -185,10 +189,10 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
             )}
             {word.antonyms.length > 0 && (
               <div>
-                <span className="text-xs font-semibold uppercase text-slate-400 block mb-2">Antonyms (विरुद्धार्थी)</span>
+                <span className="text-xs font-bold uppercase text-muted-foreground block mb-2">Antonyms (विरुद्धार्थी)</span>
                 <div className="flex flex-wrap gap-1.5">
                   {word.antonyms.map((a, i) => (
-                    <span key={i} className="px-2.5 py-1 text-xs rounded-lg bg-rose-500/10 text-rose-300 border border-rose-500/20">
+                    <span key={i} className="px-2.5 py-1 text-xs rounded-xl bg-destructive/10 text-destructive border border-destructive/20 font-medium">
                       {a}
                     </span>
                   ))}
@@ -199,22 +203,22 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
         )}
 
         {/* Learning Status & Spaced Repetition Stats */}
-        <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700/80 mb-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase text-slate-400">Learning Status</span>
+        <div className="p-4 rounded-2xl bg-secondary/40 border border-border/70 mb-5 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span className="text-xs font-bold uppercase text-muted-foreground">Learning Status</span>
             <div className="flex items-center gap-1.5">
               {(['learning', 'needs_revision', 'mastered'] as VocabLearningStatus[]).map((status) => (
                 <button
                   key={status}
                   onClick={() => handleStatusChange(status)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium capitalize transition-all ${
+                  className={`px-3 py-1 rounded-xl text-xs font-bold capitalize transition-all active:scale-95 ${
                     currentStatus === status
                       ? status === 'mastered'
-                        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
+                        ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25'
                         : status === 'needs_revision'
-                        ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'
-                        : 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                      : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                        ? 'bg-destructive text-white shadow-md shadow-destructive/25'
+                        : 'bg-primary text-primary-foreground shadow-md shadow-primary/25'
+                      : 'bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground'
                   }`}
                 >
                   {status.replace('_', ' ')}
@@ -224,24 +228,24 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
           </div>
 
           {progress && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-700/60 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-border/40 text-xs">
               <div>
-                <span className="text-slate-400 block">Total Attempts</span>
-                <span className="text-slate-100 font-semibold">{progress.attemptCount}</span>
+                <span className="text-muted-foreground block font-medium">Total Attempts</span>
+                <span className="text-foreground font-bold">{progress.attemptCount}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Correct / Wrong</span>
-                <span className="text-emerald-400 font-semibold">{progress.correctCount}</span>
-                <span className="text-slate-400"> / </span>
-                <span className="text-rose-400 font-semibold">{progress.incorrectCount}</span>
+                <span className="text-muted-foreground block font-medium">Correct / Wrong</span>
+                <span className="text-emerald-500 font-bold">{progress.correctCount}</span>
+                <span className="text-muted-foreground"> / </span>
+                <span className="text-destructive font-bold">{progress.incorrectCount}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Consecutive Recalls</span>
-                <span className="text-indigo-300 font-semibold">{progress.consecutiveSuccess}</span>
+                <span className="text-muted-foreground block font-medium">Consecutive Recalls</span>
+                <span className="text-primary font-bold">{progress.consecutiveSuccess}</span>
               </div>
               <div>
-                <span className="text-slate-400 block">Next Review</span>
-                <span className="text-amber-300 font-semibold">{progress.nextReviewDate || 'Scheduled'}</span>
+                <span className="text-muted-foreground block font-medium">Next Review</span>
+                <span className="text-amber-500 font-bold">{progress.nextReviewDate || 'Scheduled'}</span>
               </div>
             </div>
           )}
@@ -250,9 +254,9 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
         {/* Personal Notes */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase text-slate-400">Personal Notes & Mnemonics</label>
+            <label className="text-xs font-bold uppercase text-muted-foreground">Personal Notes & Mnemonics</label>
             {notesSaved && (
-              <span className="text-xs text-emerald-400 flex items-center gap-1">
+              <span className="text-xs text-emerald-500 flex items-center gap-1 font-bold">
                 <Check className="w-3.5 h-3.5" /> Saved
               </span>
             )}
@@ -262,16 +266,17 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Add your personal memory hook, context, or custom sentence..."
             rows={2}
-            className="w-full px-3 py-2 text-sm bg-slate-950 border border-slate-700 rounded-xl text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-secondary/40 border border-border/80 rounded-2xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 transition-colors"
           />
-          <div className="flex justify-end">
-            <button
+          <div className="flex justify-end pt-1">
+            <Button
+              size="sm"
               onClick={handleSaveNotes}
               disabled={isSavingNotes}
-              className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+              className="gap-1.5"
             >
               <Save className="w-3.5 h-3.5" /> Save Note
-            </button>
+            </Button>
           </div>
         </div>
       </div>

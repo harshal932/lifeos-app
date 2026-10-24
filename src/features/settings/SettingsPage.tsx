@@ -14,6 +14,7 @@ import {
   Calendar,
   AlertTriangle,
   Info,
+  Bell,
 } from 'lucide-react';
 import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
@@ -63,6 +64,18 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   // Reset confirmation state
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+
+  // Notification state
+  const [notificationStatus, setNotificationStatus] = useState<string>(
+    typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'unsupported'
+  );
+
+  const handleRequestNotification = async () => {
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      const perm = await Notification.requestPermission();
+      setNotificationStatus(perm);
+    }
+  };
 
   // Save savings goal
   const handleSaveSavingsGoal = async () => {
@@ -317,6 +330,34 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             </div>
             <Button size="sm" onClick={handleSaveSavingsGoal} disabled={isSavingSavingsGoal}>
               Save
+            </Button>
+          </div>
+        </div>
+
+        {/* Notifications & Reminders */}
+        <div className="pt-2 border-t border-border/40 space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <div>
+              <span className="font-bold text-foreground block">Browser Reminders</span>
+              <span className="text-[11px] text-muted-foreground">
+                On-device daily reminders for habits and vocabulary
+              </span>
+            </div>
+            <Button
+              size="sm"
+              variant={notificationStatus === 'granted' ? 'outline' : 'secondary'}
+              onClick={handleRequestNotification}
+              disabled={notificationStatus === 'unsupported'}
+              className="text-xs h-8"
+            >
+              <Bell className="w-3.5 h-3.5" />
+              {notificationStatus === 'granted'
+                ? 'Enabled'
+                : notificationStatus === 'denied'
+                ? 'Blocked'
+                : notificationStatus === 'unsupported'
+                ? 'Not supported'
+                : 'Enable'}
             </Button>
           </div>
         </div>

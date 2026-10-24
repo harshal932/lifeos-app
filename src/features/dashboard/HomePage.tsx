@@ -14,6 +14,10 @@ import {
   ChevronRight,
   Target,
   Coins,
+  BookOpen,
+  Brain,
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
@@ -31,8 +35,6 @@ import {
   getLocalDateString,
   formatDisplayDate,
   getTimeBasedGreeting,
-  getWeekDates,
-  getDayOfWeek,
 } from '../../utils/date';
 import { calculateCashFlow, formatINR } from '../../utils/currency';
 import { isHabitScheduledOn } from '../../utils/streaks';
@@ -146,167 +148,320 @@ export const HomePage: React.FC<HomePageProps> = ({
   const isBrandNewUser = habits.length === 0 && transactions.length === 0;
 
   return (
-    <div className="space-y-6 pb-20">
-      {/* SECTION A: HEADER */}
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* 1. GREETING & HEADER */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <img
-            src="/icons/icon-192.png"
-            alt="LifeOS App Icon"
-            className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl shadow-subtle border border-emerald-500/25 shrink-0"
-          />
-          <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
-              {formatDisplayDate(todayStr, 'EEEE, dd MMMM yyyy')}
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              {greeting}!
-            </h1>
-          </div>
+        <div>
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
+            {formatDisplayDate(todayStr, 'EEEE, dd MMMM yyyy')}
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2 mt-0.5">
+            {greeting} 👋
+          </h1>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Quick theme toggle */}
           <button
             onClick={onToggleTheme}
-            aria-label="Toggle visual theme"
-            className="p-2.5 rounded-xl bg-card border border-border shadow-subtle hover:bg-secondary text-foreground transition-all duration-200 active:scale-95"
+            className="p-2.5 rounded-2xl bg-secondary/60 hover:bg-secondary text-foreground border border-border/60 transition-all active:scale-95 shadow-subtle"
+            title="Toggle Theme"
           >
             {settings.theme === 'dark' ? (
-              <Sun className="w-5 h-5 text-amber-400" />
+              <Sun className="w-4 h-4 text-amber-400" />
             ) : (
-              <Moon className="w-5 h-5 text-indigo-500" />
+              <Moon className="w-4 h-4 text-indigo-500" />
             )}
           </button>
         </div>
       </div>
 
-      {/* SECTION F: ONBOARDING EMPTY STATE */}
+      {/* 2. ONBOARDING CARD FOR NEW USERS */}
       {isBrandNewUser && (
-        <Card className="p-6 bg-gradient-to-br from-card via-card to-primary/5 border-primary/20 space-y-4">
-          <div className="flex items-center gap-3">
-            <img
-              src="/icons/icon-192.png"
-              alt="LifeOS"
-              className="w-12 h-12 rounded-2xl shadow-sm border border-emerald-500/25 shrink-0"
-            />
+        <Card className="p-5 bg-gradient-to-br from-primary/10 via-card to-card border-primary/30 space-y-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-bold">
+              ✨
+            </div>
             <div>
-              <h3 className="text-base font-bold text-foreground">Welcome to LifeOS</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Your private, offline-first personal dashboard for habits and finances.
+              <h3 className="font-bold text-foreground text-sm">Welcome to LifeOS!</h3>
+              <p className="text-xs text-muted-foreground">
+                Your private habit tracker, expense manager, and vocabulary tutor.
               </p>
             </div>
           </div>
-
-          <p className="text-xs text-foreground/80 leading-relaxed">
-            All your data is kept 100% locally on this device in IndexedDB. Nothing is ever sent to
-            any remote server. Start by creating your habits and recording your income or expenses.
-          </p>
-
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <Button size="sm" onClick={onOpenAddHabit}>
-              <Plus className="w-4 h-4" />
-              Create Habit
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => onOpenAddTransaction('expense')}>
-              <Plus className="w-4 h-4" />
-              Add Expense
-            </Button>
-            <Button size="sm" variant="ghost" onClick={onLoadSampleData}>
-              <Sparkles className="w-4 h-4 text-primary" />
+          <div className="flex items-center gap-2 pt-1">
+            <Button size="sm" onClick={onLoadSampleData}>
               Load Starter Templates
+            </Button>
+            <Button size="sm" variant="outline" onClick={onOpenAddHabit}>
+              Create My First Habit
             </Button>
           </div>
         </Card>
       )}
 
-      {/* SECTION E: QUICK ACTION SHORTCUTS */}
-      <div className="space-y-2">
-        <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block px-1">
-          Quick Actions
-        </span>
-        <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
-          <button
-            onClick={onOpenAddHabit}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-primary/40 hover:bg-secondary/40 transition-all active:scale-95 text-center"
-          >
-            <div className="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-1.5">
-              <Plus className="w-4 h-4" />
+      {/* 3. HERO OVERVIEW CARDS: HABITS & EXPENSES SUMMARY */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Habit Completion Card */}
+        <Card
+          onClick={() => onSelectTab('habits')}
+          className="relative overflow-hidden p-5 flex flex-col justify-between group cursor-pointer"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Today's Habits
+              </span>
             </div>
-            <span className="text-[11px] font-semibold text-foreground leading-tight">Add Habit</span>
-          </button>
+            <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+              {todayCompletionPct}% Done
+            </span>
+          </div>
 
-          <button
-            onClick={() => onOpenAddTransaction('expense')}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-destructive/40 hover:bg-secondary/40 transition-all active:scale-95 text-center"
-          >
-            <div className="w-9 h-9 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center mb-1.5">
-              <ArrowUpRight className="w-4 h-4" />
+          <div className="my-2">
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-extrabold text-foreground tracking-tight">
+                {completedTodayHabits.length}
+              </span>
+              <span className="text-sm font-semibold text-muted-foreground">
+                / {scheduledTodayHabits.length} habits completed
+              </span>
             </div>
-            <span className="text-[11px] font-semibold text-foreground leading-tight">Add Expense</span>
-          </button>
 
-          <button
-            onClick={() => onOpenAddTransaction('income')}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-emerald-500/40 hover:bg-secondary/40 transition-all active:scale-95 text-center"
-          >
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-1.5">
-              <ArrowDownLeft className="w-4 h-4" />
+            {/* Progress bar */}
+            <div className="w-full h-2 bg-secondary rounded-full mt-3 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500"
+                style={{ width: `${todayCompletionPct}%` }}
+              />
             </div>
-            <span className="text-[11px] font-semibold text-foreground leading-tight">Add Income</span>
-          </button>
+          </div>
 
-          <button
-            onClick={onOpenBudgetModal}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl bg-card border border-border/70 hover:border-primary/40 hover:bg-secondary/40 transition-all active:scale-95 text-center"
-          >
-            <div className="w-9 h-9 rounded-xl bg-secondary text-foreground flex items-center justify-center mb-1.5">
-              <Wallet className="w-4 h-4" />
+          <div className="flex items-center justify-between pt-3 border-t border-border/40 text-xs">
+            <span className="text-muted-foreground flex items-center gap-1 font-medium">
+              <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+              {weeklyConsistency}% weekly consistency
+            </span>
+            <span className="text-primary font-semibold flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
+              Habits <ChevronRight className="w-3.5 h-3.5" />
+            </span>
+          </div>
+        </Card>
+
+        {/* Monthly Expenses Snapshot Card */}
+        <Card
+          onClick={() => onSelectTab('finance')}
+          className="relative overflow-hidden p-5 flex flex-col justify-between group cursor-pointer"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-indigo-500/15 text-indigo-500 flex items-center justify-center">
+                <Wallet className="w-4 h-4" />
+              </div>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                Monthly Expenses
+              </span>
             </div>
-            <span className="text-[11px] font-semibold text-foreground leading-tight">Set Budget</span>
-          </button>
-        </div>
+            {totalHoldingsPaise > 0 && (
+              <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full border border-primary/20">
+                Holdings: {formatINR(totalHoldingsPaise)}
+              </span>
+            )}
+          </div>
+
+          <div className="my-2">
+            <span className="text-xs text-muted-foreground block">Spent this month</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-extrabold text-foreground tracking-tight font-mono">
+                {formatINR(monthCashFlow.effectiveExpensePaise)}
+              </span>
+              {monthCashFlow.totalIncomePaise > 0 && (
+                <span className="text-xs font-semibold text-emerald-500 flex items-center gap-0.5">
+                  <ArrowDownLeft className="w-3 h-3" /> +{formatINR(monthCashFlow.totalIncomePaise)}
+                </span>
+              )}
+            </div>
+
+            {overallBudgetPaise > 0 && (
+              <div className="flex items-center justify-between text-xs text-muted-foreground mt-2 font-medium">
+                <span>Budget Left:</span>
+                <span className={remainingBudgetPaise >= 0 ? 'text-emerald-500 font-bold' : 'text-destructive font-bold'}>
+                  {formatINR(remainingBudgetPaise)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between pt-3 border-t border-border/40 text-xs">
+            <span className="text-muted-foreground font-medium">
+              {currentMonthTransactions.length} transactions recorded
+            </span>
+            <span className="text-primary font-semibold flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
+              Expenses <ChevronRight className="w-3.5 h-3.5" />
+            </span>
+          </div>
+        </Card>
       </div>
 
-      {/* SECTION: ENGLISH VOCABULARY WORD OF THE DAY */}
-      <div
+      {/* 4. WORD OF THE DAY FEATURED BANNER */}
+      <Card
         onClick={() => onSelectTab('vocabulary')}
-        className="cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-950/60 via-slate-900 to-card border border-indigo-500/30 p-4 transition-all duration-200 hover:border-indigo-500/60 shadow-subtle flex items-center justify-between"
+        className="cursor-pointer group relative overflow-hidden p-5 bg-gradient-to-br from-indigo-950/40 via-card to-card border-indigo-500/30 hover:border-indigo-500/60 transition-all duration-300"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
-                Word of the Day
+              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                <Sparkles className="w-3 h-3" /> Word of the Day
               </span>
-              <span className="text-[10px] text-muted-foreground font-mono">
-                English Vocabulary
+              <span className="text-[11px] font-mono italic text-muted-foreground">
+                ({wotd.partOfSpeech})
+              </span>
+              <span className="text-[11px] font-semibold uppercase text-indigo-400/80">
+                • {wotd.difficulty}
               </span>
             </div>
-            <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="font-extrabold text-foreground text-base tracking-tight group-hover:text-indigo-300 transition-colors">
+
+            <div className="flex items-baseline gap-2.5 pt-1">
+              <h3 className="text-2xl font-black text-foreground tracking-tight group-hover:text-indigo-400 transition-colors">
                 {wotd.word}
-              </span>
-              <span className="text-xs text-amber-300 font-devanagari font-bold">
+              </h3>
+              <span className="text-lg font-bold text-amber-400 font-devanagari">
                 — {wotd.marathiMeaning}
               </span>
             </div>
+
+            <p className="text-xs text-muted-foreground line-clamp-1 pt-0.5">
+              {wotd.meaning}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+            <span className="text-xs font-semibold text-indigo-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+              Explore Vocab <ArrowRight className="w-3.5 h-3.5" />
+            </span>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-xs font-semibold text-indigo-400 group-hover:translate-x-1 transition-transform">
-          <span>Learn</span>
-          <ChevronRight className="w-4 h-4" />
+      </Card>
+
+      {/* 5. QUICK-ACTION BUTTONS */}
+      <div>
+        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block px-1 mb-2.5">
+          Quick Actions
+        </span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {/* Add Habit */}
+          <button
+            onClick={onOpenAddHabit}
+            className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/70 hover:border-primary/50 hover:bg-secondary/40 transition-all active:scale-95 text-left group shadow-subtle"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Plus className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-foreground block">Add Habit</span>
+              <span className="text-[10px] text-muted-foreground">Build routine</span>
+            </div>
+          </button>
+
+          {/* Record Expense */}
+          <button
+            onClick={() => onOpenAddTransaction('expense')}
+            className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/70 hover:border-destructive/50 hover:bg-secondary/40 transition-all active:scale-95 text-left group shadow-subtle"
+          >
+            <div className="w-10 h-10 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-foreground block">Add Expense</span>
+              <span className="text-[10px] text-muted-foreground">Track spend</span>
+            </div>
+          </button>
+
+          {/* Record Income */}
+          <button
+            onClick={() => onOpenAddTransaction('income')}
+            className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/70 hover:border-emerald-500/50 hover:bg-secondary/40 transition-all active:scale-95 text-left group shadow-subtle"
+          >
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <ArrowDownLeft className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-foreground block">Add Income</span>
+              <span className="text-[10px] text-muted-foreground">Log earnings</span>
+            </div>
+          </button>
+
+          {/* Practice Vocab Quiz */}
+          <button
+            onClick={() => onSelectTab('vocabulary')}
+            className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/70 hover:border-indigo-500/50 hover:bg-secondary/40 transition-all active:scale-95 text-left group shadow-subtle"
+          >
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Brain className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-foreground block">Start Quiz</span>
+              <span className="text-[10px] text-muted-foreground">Practice vocab</span>
+            </div>
+          </button>
         </div>
       </div>
 
-      {/* SECTION B: TODAY'S HABITS */}
+      {/* 6. WEEKLY ACTIVITY & CONSISTENCY (Last 7 Days) */}
+      <Card className="p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-primary" />
+            <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Last 7 Days Activity
+            </span>
+          </div>
+          <span className="text-xs font-semibold text-emerald-500">
+            {weeklyCompletedTotal} / {weeklyScheduledTotal} completed
+          </span>
+        </div>
+
+        <div className="grid grid-cols-7 gap-2 pt-1 text-center">
+          {last7Days.map((d, idx) => (
+            <div
+              key={idx}
+              className={`p-2.5 rounded-2xl border transition-all flex flex-col items-center justify-between min-h-[64px] ${
+                d.isToday
+                  ? 'bg-primary/10 border-primary shadow-sm font-bold'
+                  : 'bg-secondary/40 border-border/50'
+              }`}
+            >
+              <span className="text-[11px] font-bold text-muted-foreground">{d.dayLetter}</span>
+              <div
+                className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold transition-all ${
+                  d.completed > 0
+                    ? 'bg-emerald-500 text-white shadow-xs'
+                    : d.scheduled > 0
+                    ? 'bg-secondary text-muted-foreground'
+                    : 'text-muted-foreground/40'
+                }`}
+              >
+                {d.completed > 0 ? d.completed : d.scheduled > 0 ? '0' : '-'}
+              </div>
+              <span className="text-[9px] font-mono text-muted-foreground">
+                {d.dateStr.slice(8)}
+              </span>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* 7. TODAY'S HABITS LIST */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Today's Habits ({completedTodayHabits.length}/{scheduledTodayHabits.length})
             </h3>
           </div>
@@ -318,222 +473,65 @@ export const HomePage: React.FC<HomePageProps> = ({
           </button>
         </div>
 
-        {/* Progress Card */}
         {scheduledTodayHabits.length > 0 ? (
           <div className="space-y-2.5">
-            <Card className="p-4 bg-gradient-to-r from-card to-secondary/30">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-foreground">Completion Rate</span>
-                <span className="text-sm font-black text-emerald-500">{todayCompletionPct}%</span>
-              </div>
-              <div className="w-full h-2 bg-secondary rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-                  style={{ width: `${todayCompletionPct}%` }}
-                />
-              </div>
-            </Card>
-
-            {/* List of today's habits with 1-tap complete */}
-            <div className="space-y-2">
-              {scheduledTodayHabits.map((h) => (
-                <HabitCard
-                  key={h.id}
-                  habit={h}
-                  completions={completions}
-                  onToggleComplete={handleToggleHabit}
-                  onOpenDetails={() => onSelectTab('habits')}
-                />
-              ))}
-            </div>
+            {scheduledTodayHabits.map((h) => (
+              <HabitCard
+                key={h.id}
+                habit={h}
+                completions={completions}
+                onToggleComplete={handleToggleHabit}
+                onOpenDetails={() => onSelectTab('habits')}
+              />
+            ))}
           </div>
         ) : (
           <Card className="p-6 text-center bg-card">
             <Calendar className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground font-medium">
               {activeHabits.length === 0
-                ? 'No habits created yet. Tap "Add Habit" above!'
-                : 'No habits scheduled for today. Take rest or review your schedule!'}
+                ? 'No habits created yet. Tap "Add Habit" above to get started!'
+                : 'No habits scheduled for today. Rest or check your schedule!'}
             </p>
           </Card>
         )}
       </div>
 
-      {/* SECTION C: FINANCIAL SUMMARY */}
+      {/* 8. RECENT TRANSACTIONS PREVIEW */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              Monthly Financial Overview
+            <Wallet className="w-4 h-4 text-indigo-400" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Recent Transactions
             </h3>
           </div>
           <button
             onClick={() => onSelectTab('finance')}
             className="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
           >
-            All Transactions <ChevronRight className="w-3.5 h-3.5" />
+            View All <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Total Funds & Holdings Summary Banner */}
-        <Card
-          onClick={() => onSelectTab('finance')}
-          className="p-3.5 bg-gradient-to-r from-card via-card to-primary/5 border border-primary/25 hover:border-primary/45 cursor-pointer transition-all"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
-                <Coins className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
-                  Total Funds & Net Holdings
-                </span>
-                <span className="text-base font-black text-foreground">
-                  {formatINR(totalHoldingsPaise)}
-                </span>
-              </div>
-            </div>
-            <div className="text-right text-[11px] text-muted-foreground hidden sm:block">
-              <span>Cash: <strong className="text-foreground">{formatINR(holdings?.cashPaise || 0, false)}</strong></span> •{' '}
-              <span>Share Market: <strong className="text-foreground">{formatINR(holdings?.shareMarketPaise || 0, false)}</strong></span> •{' '}
-              <span>Saved: <strong className="text-foreground">{formatINR(holdings?.savedPaise || 0, false)}</strong></span>
-            </div>
-          </div>
-        </Card>
-
-        {/* 2x2 Metric Cards */}
-        <div className="grid grid-cols-2 gap-3">
-          <Card className="p-3.5 bg-card">
-            <span className="text-[11px] text-muted-foreground font-semibold block">
-              Income Received
-            </span>
-            <div className="text-lg font-black text-emerald-500 mt-0.5">
-              {formatINR(monthCashFlow.totalIncomePaise)}
-            </div>
-            <span className="text-[10px] text-muted-foreground block mt-0.5">This month</span>
-          </Card>
-
-          <Card className="p-3.5 bg-card">
-            <span className="text-[11px] text-muted-foreground font-semibold block">
-              Recorded Expenses
-            </span>
-            <div className="text-lg font-black text-destructive mt-0.5">
-              {formatINR(monthCashFlow.effectiveExpensePaise)}
-            </div>
-            <span className="text-[10px] text-muted-foreground block mt-0.5">
-              {monthCashFlow.totalRefundPaise > 0 ? 'Net of refunds' : 'This month'}
-            </span>
-          </Card>
-
-          <Card className="p-3.5 bg-card">
-            <span className="text-[11px] text-muted-foreground font-semibold block">
-              Net Cash Flow
-            </span>
-            <div
-              className={`text-lg font-black mt-0.5 ${
-                monthCashFlow.netCashFlowPaise >= 0 ? 'text-emerald-500' : 'text-destructive'
-              }`}
-            >
-              {formatINR(monthCashFlow.netCashFlowPaise)}
-            </div>
-            <span className="text-[10px] text-muted-foreground block mt-0.5">Income - Expense</span>
-          </Card>
-
-          <Card className="p-3.5 bg-card">
-            <span className="text-[11px] text-muted-foreground font-semibold block">
-              Budget Remaining
-            </span>
-            <div
-              className={`text-lg font-black mt-0.5 ${
-                overallBudgetPaise > 0 && remainingBudgetPaise < 0
-                  ? 'text-destructive'
-                  : 'text-foreground'
-              }`}
-            >
-              {overallBudgetPaise > 0 ? formatINR(remainingBudgetPaise) : 'No limit'}
-            </div>
-            <span className="text-[10px] text-muted-foreground block mt-0.5">
-              {overallBudgetPaise > 0 ? `Limit: ${formatINR(overallBudgetPaise)}` : 'Tap to set limit'}
-            </span>
-          </Card>
-        </div>
-
-        {/* Recent 3 transactions preview */}
-        {recentTransactions.length > 0 && (
-          <div className="space-y-2 pt-1">
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block px-1">
-              Recent Transactions
-            </span>
+        {recentTransactions.length > 0 ? (
+          <div className="space-y-2">
             {recentTransactions.map((tx) => (
               <TransactionCard
                 key={tx.id}
                 transaction={tx}
                 onEdit={() => onSelectTab('finance')}
-                onDelete={() => onSelectTab('finance')}
               />
             ))}
           </div>
+        ) : (
+          <Card className="p-6 text-center bg-card">
+            <Wallet className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
+            <p className="text-xs text-muted-foreground font-medium">
+              No transactions recorded this month yet. Tap "Add Expense" to track your spend!
+            </p>
+          </Card>
         )}
-      </div>
-
-      {/* SECTION D: WEEKLY OVERVIEW */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-amber-500" />
-            <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              Weekly Habit Consistency ({weeklyConsistency}%)
-            </h3>
-          </div>
-          <button
-            onClick={() => onSelectTab('insights')}
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
-          >
-            Insights <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        <Card className="p-4 space-y-3">
-          <div className="flex items-center justify-between gap-1">
-            {last7Days.map((d) => (
-              <div key={d.dateStr} className="flex-1 text-center space-y-1.5">
-                <span
-                  className={`text-[11px] font-bold block ${
-                    d.isToday ? 'text-primary' : 'text-muted-foreground'
-                  }`}
-                >
-                  {d.dayLetter}
-                </span>
-
-                {/* Vertical bar */}
-                <div className="w-full h-16 bg-secondary rounded-lg flex items-end p-0.5 overflow-hidden">
-                  <div
-                    className={`w-full rounded-md transition-all duration-300 ${
-                      d.pct === 100
-                        ? 'bg-emerald-500'
-                        : d.pct > 0
-                        ? 'bg-primary'
-                        : 'bg-transparent'
-                    }`}
-                    style={{ height: `${Math.max(d.pct, 4)}%` }}
-                  />
-                </div>
-
-                <span className="text-[10px] text-muted-foreground block font-medium">
-                  {d.scheduled > 0 ? `${d.completed}/${d.scheduled}` : '-'}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div className="pt-2 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
-            <span>
-              Completed <strong className="text-foreground">{weeklyCompletedTotal}</strong> habit occurrences this week.
-            </span>
-          </div>
-        </Card>
       </div>
     </div>
   );

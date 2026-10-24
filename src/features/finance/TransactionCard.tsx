@@ -9,7 +9,7 @@ import { formatDisplayDate } from '../../utils/date';
 interface TransactionCardProps {
   transaction: Transaction;
   onEdit: (tx: Transaction) => void;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 export const TransactionCard: React.FC<TransactionCardProps> = ({
@@ -99,13 +99,15 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
             >
               <Edit3 className="w-3.5 h-3.5" />
             </button>
-            <button
-              onClick={() => onDelete(transaction.id)}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-              title="Delete transaction"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
+            {onDelete && (
+              <button
+                onClick={() => onDelete(transaction.id)}
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                title="Delete transaction"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

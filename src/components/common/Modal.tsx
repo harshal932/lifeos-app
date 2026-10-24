@@ -41,8 +41,11 @@ export const Modal: React.FC<ModalProps> = ({
 
       {/* Modal Dialog Content / Mobile Bottom Sheet */}
       <div
-        className={`relative z-10 w-full ${maxWidth} bg-card text-card-foreground border-t sm:border border-border rounded-t-3xl sm:rounded-2xl shadow-elevated p-5 sm:p-6 max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200`}
+        className={`relative z-10 w-full ${maxWidth} bg-card text-card-foreground border-t sm:border border-border rounded-t-3xl sm:rounded-3xl shadow-elevated p-5 sm:p-6 max-h-[90vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-200`}
       >
+        {/* Mobile handle indicator */}
+        <div className="sm:hidden w-12 h-1.5 bg-muted-foreground/25 rounded-full mx-auto -mt-1 mb-3.5" />
+
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-border/50">
           <div>
