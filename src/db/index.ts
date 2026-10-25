@@ -7,41 +7,51 @@ import type {
   StudySession,
   JournalEntry,
   AppSettings,
+  TaskItem,
 } from '../types';
 
 export const DEFAULT_HABIT_CATEGORIES = [
-  'Study',
-  'Fitness',
-  'Health',
-  'Career',
+  'Study & Revision',
+  'College & Routine',
+  'Fitness & Health',
+  'Vocab & Reading',
+  'Daily Finance',
   'Personal',
-  'Finance',
   'Other',
 ];
 
+export const DEFAULT_TASK_CATEGORIES = [
+  'Assignments',
+  'Exams & Quizzes',
+  'Lectures & College',
+  'Self Study',
+  'Lab & Projects',
+  'Daily Chores',
+  'General',
+];
+
 export const DEFAULT_EXPENSE_CATEGORIES = [
-  'Food',
-  'Groceries',
-  'Transport',
-  'Education',
-  'Shopping',
-  'Health',
-  'Entertainment',
-  'Bills',
-  'Subscriptions',
-  'Personal',
-  'Travel',
-  'Gifts',
+  'Chai & Snacks',
+  'Canteen & Food',
+  'Auto & Bus / Metro',
+  'Books & Stationery',
+  'Xerox & Printout',
+  'Hostel & Mess',
+  'Recharge & Data',
+  'Hangouts & Fun',
+  'College & Exam Fees',
+  'Courses & Tools',
+  'Personal & Health',
   'Other',
 ];
 
 export const DEFAULT_INCOME_CATEGORIES = [
-  'Allowance',
-  'Salary',
-  'Freelancing',
-  'Gifts Received',
-  'Interest',
-  'Refunds',
+  'Pocket Money',
+  'From Family',
+  'Part-Time / Tutoring',
+  'Scholarship',
+  'Friend Repayment',
+  'Gifts',
   'Other',
 ];
 
@@ -74,6 +84,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   savingsGoalPaise: 5000000, // ₹50,000.00
   studySubjects: DEFAULT_STUDY_SUBJECTS,
   habitCategories: DEFAULT_HABIT_CATEGORIES,
+  taskCategories: DEFAULT_TASK_CATEGORIES,
   expenseCategories: DEFAULT_EXPENSE_CATEGORIES,
   incomeCategories: DEFAULT_INCOME_CATEGORIES,
   paymentMethods: DEFAULT_PAYMENT_METHODS,
@@ -92,6 +103,7 @@ export class LifeOSDatabase extends Dexie {
   habitCompletions!: Table<HabitCompletion, string>;
   transactions!: Table<Transaction, string>;
   budgets!: Table<Budget, string>;
+  tasks!: Table<TaskItem, string>;
   studySessions!: Table<StudySession, string>;
   journalEntries!: Table<JournalEntry, string>;
   settings!: Table<AppSettings, string>;
@@ -116,6 +128,10 @@ export class LifeOSDatabase extends Dexie {
       vocabQuizHistory: 'id, date, category, completedAt',
     });
 
+    this.version(3).stores({
+      tasks: 'id, dueDate, priority, category, completed, createdAt',
+    });
+
     this.on('populate', async () => {
       await this.settings.put(DEFAULT_SETTINGS);
     });
@@ -124,12 +140,33 @@ export class LifeOSDatabase extends Dexie {
 
 export const db = new LifeOSDatabase();
 
-// Ensure settings exist even if already opened
+// Ensure settings exist and include student defaults
 export async function initializeDatabase(): Promise<AppSettings> {
   const existing = await db.settings.get('current');
   if (!existing) {
     await db.settings.put(DEFAULT_SETTINGS);
     return DEFAULT_SETTINGS;
+  }
+  // Ensure student categories are merged
+  let needsUpdate = false;
+  const updated = { ...existing };
+
+  if (!updated.taskCategories || updated.taskCategories.length === 0 || !updated.taskCategories.includes('Assignments')) {
+    updated.taskCategories = Array.from(new Set([...DEFAULT_TASK_CATEGORIES, ...(updated.taskCategories || [])]));
+    needsUpdate = true;
+  }
+  if (!updated.expenseCategories.includes('Chai & Snacks') || !updated.expenseCategories.includes('Canteen & Food')) {
+    updated.expenseCategories = Array.from(new Set([...DEFAULT_EXPENSE_CATEGORIES, ...updated.expenseCategories]));
+    needsUpdate = true;
+  }
+  if (!updated.incomeCategories.includes('Pocket Money')) {
+    updated.incomeCategories = Array.from(new Set([...DEFAULT_INCOME_CATEGORIES, ...updated.incomeCategories]));
+    needsUpdate = true;
+  }
+
+  if (needsUpdate) {
+    await db.settings.put(updated);
+    return updated;
   }
   return existing;
 }

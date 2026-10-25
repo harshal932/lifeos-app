@@ -169,6 +169,22 @@ export interface VocabQuizResult {
   }>;
 }
 
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent';
+
+export interface TaskItem {
+  id: string;
+  title: string;
+  description?: string;
+  dueDate: string; // YYYY-MM-DD
+  dueTime?: string; // HH:mm
+  priority: TaskPriority;
+  category: string;
+  completed: boolean;
+  completedAt?: string; // ISO string
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppSettings {
   id: string; // 'current'
   theme: 'light' | 'dark' | 'system';
@@ -179,6 +195,7 @@ export interface AppSettings {
   savingsGoalPaise: number;
   studySubjects: string[];
   habitCategories: string[];
+  taskCategories?: string[];
   expenseCategories: string[];
   incomeCategories: string[];
   paymentMethods: string[];
@@ -203,9 +220,11 @@ export interface BackupData {
   habitCompletions: HabitCompletion[];
   transactions: Transaction[];
   budgets: Budget[];
+  tasks?: TaskItem[];
   studySessions: StudySession[];
   journalEntries: JournalEntry[];
   settings: AppSettings;
   vocabProgress?: VocabProgress[];
   vocabQuizHistory?: VocabQuizResult[];
 }
+

@@ -12,6 +12,7 @@ export async function exportBackup(): Promise<{ filename: string; jsonString: st
     habitCompletions,
     transactions,
     budgets,
+    tasks,
     studySessions,
     journalEntries,
     settings,
@@ -22,6 +23,7 @@ export async function exportBackup(): Promise<{ filename: string; jsonString: st
     db.habitCompletions.toArray(),
     db.transactions.toArray(),
     db.budgets.toArray(),
+    db.tasks.toArray(),
     db.studySessions.toArray(),
     db.journalEntries.toArray(),
     db.settings.get('current'),
@@ -36,6 +38,7 @@ export async function exportBackup(): Promise<{ filename: string; jsonString: st
     habitCompletions,
     transactions,
     budgets,
+    tasks,
     studySessions,
     journalEntries,
     settings: settings || ({} as AppSettings),
@@ -163,6 +166,7 @@ export async function restoreBackup(
       db.habitCompletions,
       db.transactions,
       db.budgets,
+      db.tasks,
       db.studySessions,
       db.journalEntries,
       db.settings,
@@ -176,6 +180,7 @@ export async function restoreBackup(
           db.habitCompletions.clear(),
           db.transactions.clear(),
           db.budgets.clear(),
+          db.tasks.clear(),
           db.studySessions.clear(),
           db.journalEntries.clear(),
           db.vocabProgress.clear(),
@@ -201,6 +206,11 @@ export async function restoreBackup(
       // Add or put budgets
       if (backup.budgets?.length) {
         await db.budgets.bulkPut(backup.budgets);
+      }
+
+      // Add or put tasks
+      if (backup.tasks?.length) {
+        await db.tasks.bulkPut(backup.tasks);
       }
 
       // Add or put study sessions
@@ -242,6 +252,7 @@ export async function resetAllData(): Promise<void> {
       db.habitCompletions,
       db.transactions,
       db.budgets,
+      db.tasks,
       db.studySessions,
       db.journalEntries,
       db.vocabProgress,
@@ -253,6 +264,7 @@ export async function resetAllData(): Promise<void> {
         db.habitCompletions.clear(),
         db.transactions.clear(),
         db.budgets.clear(),
+        db.tasks.clear(),
         db.studySessions.clear(),
         db.journalEntries.clear(),
         db.vocabProgress.clear(),

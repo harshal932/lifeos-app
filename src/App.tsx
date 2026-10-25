@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db, initializeDatabase, DEFAULT_SETTINGS } from './db';
+import { db, initializeDatabase, DEFAULT_SETTINGS, DEFAULT_TASK_CATEGORIES } from './db';
 import type {
   Habit,
   HabitCompletion,
@@ -9,18 +9,22 @@ import type {
   JournalEntry,
   AppSettings,
   TransactionType,
+  TaskItem,
 } from './types';
 import { Navigation, type TabType } from './components/layout/Navigation';
 import { HomePage } from './features/dashboard/HomePage';
 import { HabitsPage } from './features/habits/HabitsPage';
+import { TasksPage } from './features/tasks/TasksPage';
 import { FinancePage } from './features/finance/FinancePage';
 import { InsightsPage } from './features/insights/InsightsPage';
 import { SettingsPage } from './features/settings/SettingsPage';
 import { VocabularyPage } from './features/vocabulary/VocabularyPage';
 import { AddEditHabitModal } from './features/habits/AddEditHabitModal';
+import { AddEditTaskModal } from './features/tasks/AddEditTaskModal';
 import { AddEditTransactionModal } from './features/finance/AddEditTransactionModal';
 import { BudgetModal } from './features/budgets/BudgetModal';
 import { createHabit } from './services/habitService';
+import { createTask, getAllTasks } from './services/taskService';
 import { createTransaction } from './services/financeService';
 import { saveBudget } from './services/budgetService';
 import { loadStarterTemplates } from './services/sampleDataService';
@@ -33,12 +37,14 @@ export const App: React.FC = () => {
   const [completions, setCompletions] = useState<HabitCompletion[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [tasks, setTasks] = useState<TaskItem[]>([]);
   const [studySessions, setStudySessions] = useState<StudySession[]>([]);
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Global modal triggers
   const [isAddHabitOpen, setIsAddHabitOpen] = useState(false);
+  const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
   const [isAddTxOpen, setIsAddTxOpen] = useState(false);
   const [addTxDefaultType, setAddTxDefaultType] = useState<TransactionType>('expense');
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
@@ -52,6 +58,7 @@ export const App: React.FC = () => {
         loadedCompletions,
         loadedTransactions,
         loadedBudgets,
+        loadedTasks,
         loadedStudy,
         loadedJournal,
       ] = await Promise.all([
@@ -60,6 +67,7 @@ export const App: React.FC = () => {
         db.habitCompletions.toArray(),
         db.transactions.reverse().sortBy('date'),
         db.budgets.toArray(),
+        getAllTasks(),
         db.studySessions.reverse().sortBy('date'),
         db.journalEntries.reverse().sortBy('date'),
       ]);
@@ -69,6 +77,7 @@ export const App: React.FC = () => {
       setCompletions(loadedCompletions);
       setTransactions(loadedTransactions);
       setBudgets(loadedBudgets);
+      setTasks(loadedTasks);
       setStudySessions(loadedStudy);
       setJournalEntries(loadedJournal);
     } catch (err) {
@@ -118,6 +127,12 @@ export const App: React.FC = () => {
     await refreshData();
   };
 
+  // Add Task from shortcut
+  const handleSaveTask = async (data: Omit<TaskItem, 'id' | 'createdAt' | 'updatedAt'>) => {
+    await createTask(data);
+    await refreshData();
+  };
+
   // Add Transaction from shortcut
   const handleSaveTransaction = async (
     data: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>
@@ -140,6 +155,7 @@ export const App: React.FC = () => {
 
   const currentMonthStr = getCurrentMonthString();
   const currentMonthBudget = budgets.find((b) => b.month === currentMonthStr);
+  const taskCategories = settings.taskCategories || DEFAULT_TASK_CATEGORIES;
 
   if (isLoading) {
     return (
@@ -168,10 +184,12 @@ export const App: React.FC = () => {
             habits={habits}
             completions={completions}
             transactions={transactions}
+            tasks={tasks}
             budget={currentMonthBudget}
             settings={settings}
             onSelectTab={setCurrentTab}
             onOpenAddHabit={() => setIsAddHabitOpen(true)}
+            onOpenAddTask={() => setIsAddTaskOpen(true)}
             onOpenAddTransaction={(type) => {
               setAddTxDefaultType(type || 'expense');
               setIsAddTxOpen(true);
@@ -179,6 +197,14 @@ export const App: React.FC = () => {
             onOpenBudgetModal={() => setIsBudgetModalOpen(true)}
             onToggleTheme={handleToggleTheme}
             onLoadSampleData={handleLoadSampleData}
+            onRefresh={refreshData}
+          />
+        )}
+
+        {currentTab === 'tasks' && (
+          <TasksPage
+            tasks={tasks}
+            categories={taskCategories}
             onRefresh={refreshData}
           />
         )}
@@ -200,6 +226,7 @@ export const App: React.FC = () => {
             expenseCategories={settings.expenseCategories}
             incomeCategories={settings.incomeCategories}
             paymentMethods={settings.paymentMethods}
+            onOpenBudgetModal={() => setIsBudgetModalOpen(true)}
             onUpdateHoldings={(holdings) => handleUpdateSettings({ holdings })}
             onRefresh={refreshData}
           />
@@ -237,6 +264,14 @@ export const App: React.FC = () => {
         onClose={() => setIsAddHabitOpen(false)}
         onSave={handleSaveHabit}
         categories={settings.habitCategories}
+      />
+
+      {/* Global Add Task Modal */}
+      <AddEditTaskModal
+        isOpen={isAddTaskOpen}
+        onClose={() => setIsAddTaskOpen(false)}
+        onSave={handleSaveTask}
+        categories={taskCategories}
       />
 
       {/* Global Add Transaction Modal */}

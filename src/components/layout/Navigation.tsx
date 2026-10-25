@@ -1,7 +1,7 @@
 import React from 'react';
-import { Home, CheckCircle2, Wallet, BarChart3, User, BookA, Sparkles } from 'lucide-react';
+import { Home, ListTodo, CheckCircle2, Wallet, BarChart3, User, BookA, Sparkles } from 'lucide-react';
 
-export type TabType = 'home' | 'habits' | 'finance' | 'vocabulary' | 'insights' | 'settings';
+export type TabType = 'home' | 'tasks' | 'habits' | 'finance' | 'vocabulary' | 'insights' | 'settings';
 
 interface NavigationProps {
   currentTab: TabType;
@@ -9,20 +9,22 @@ interface NavigationProps {
 }
 
 export const Navigation: React.FC<NavigationProps> = ({ currentTab, onSelectTab }) => {
-  // Mobile 5 primary tabs
+  // Mobile 6 primary tabs
   const mobileTabs = [
     { id: 'home' as TabType, label: 'Home', icon: Home },
-    { id: 'habits' as TabType, label: 'Habits', icon: CheckCircle2 },
+    { id: 'tasks' as TabType, label: 'To-Dos', icon: ListTodo },
     { id: 'finance' as TabType, label: 'Expenses', icon: Wallet },
+    { id: 'habits' as TabType, label: 'Habits', icon: CheckCircle2 },
     { id: 'vocabulary' as TabType, label: 'Vocab', icon: BookA },
     { id: 'settings' as TabType, label: 'Profile', icon: User },
   ];
 
-  // Desktop all 6 tabs
+  // Desktop all 7 tabs
   const desktopTabs = [
     { id: 'home' as TabType, label: 'Home', icon: Home },
+    { id: 'tasks' as TabType, label: 'To-Do List', icon: ListTodo },
+    { id: 'finance' as TabType, label: 'Daily Expenses', icon: Wallet },
     { id: 'habits' as TabType, label: 'Habits', icon: CheckCircle2 },
-    { id: 'finance' as TabType, label: 'Expenses', icon: Wallet },
     { id: 'vocabulary' as TabType, label: 'Vocabulary', icon: BookA },
     { id: 'insights' as TabType, label: 'Insights', icon: BarChart3 },
     { id: 'settings' as TabType, label: 'Settings', icon: User },
@@ -81,10 +83,10 @@ export const Navigation: React.FC<NavigationProps> = ({ currentTab, onSelectTab 
             </div>
             <div>
               <span className="font-extrabold tracking-tight text-lg text-foreground flex items-center gap-1.5">
-                LifeOS
+                LifeOS <span className="text-[10px] bg-primary/15 text-primary border border-primary/25 px-1.5 py-0.2 rounded-md font-bold uppercase tracking-wider">Student</span>
               </span>
-              <span className="text-[10px] text-muted-foreground block -mt-1 font-semibold uppercase tracking-wider">
-                Productivity & Finance
+              <span className="text-[10px] text-muted-foreground block -mt-0.5 font-semibold uppercase tracking-wider">
+                Daily Expenses & To-Dos
               </span>
             </div>
           </div>

@@ -14,6 +14,8 @@ interface AddEditTransactionModalProps {
   incomeCategories: string[];
   paymentMethods: string[];
   defaultType?: TransactionType;
+  defaultDate?: string;
+  defaultCategory?: string;
 }
 
 export const AddEditTransactionModal: React.FC<AddEditTransactionModalProps> = ({
@@ -25,12 +27,14 @@ export const AddEditTransactionModal: React.FC<AddEditTransactionModalProps> = (
   incomeCategories,
   paymentMethods,
   defaultType = 'expense',
+  defaultDate,
+  defaultCategory,
 }) => {
   const [type, setType] = useState<TransactionType>(defaultType);
   const [amountInput, setAmountInput] = useState('');
   const [category, setCategory] = useState('');
   const [paymentMethod, setPaymentMethod] = useState(paymentMethods[0] || 'UPI');
-  const [date, setDate] = useState(getLocalDateString());
+  const [date, setDate] = useState(defaultDate || getLocalDateString());
   const [time, setTime] = useState('');
   const [description, setDescription] = useState('');
   const [notes, setNotes] = useState('');
@@ -56,9 +60,13 @@ export const AddEditTransactionModal: React.FC<AddEditTransactionModalProps> = (
       setType(defaultType);
       setAmountInput('');
       const defaultCats = defaultType === 'income' ? incomeCategories : expenseCategories;
-      setCategory(defaultCats[0] || 'Food');
+      if (defaultCategory && defaultCats.includes(defaultCategory)) {
+        setCategory(defaultCategory);
+      } else {
+        setCategory(defaultCats[0] || 'Food');
+      }
       setPaymentMethod(paymentMethods[0] || 'UPI');
-      setDate(getLocalDateString());
+      setDate(defaultDate || getLocalDateString());
       const now = new Date();
       setTime(`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`);
       setDescription('');
@@ -66,7 +74,7 @@ export const AddEditTransactionModal: React.FC<AddEditTransactionModalProps> = (
       setTagsInput('');
     }
     setError('');
-  }, [transactionToEdit, isOpen, defaultType, expenseCategories, incomeCategories, paymentMethods]);
+  }, [transactionToEdit, isOpen, defaultType, defaultDate, defaultCategory, expenseCategories, incomeCategories, paymentMethods]);
 
   // Handle type change
   const handleTypeChange = (newType: TransactionType) => {
@@ -128,8 +136,14 @@ export const AddEditTransactionModal: React.FC<AddEditTransactionModalProps> = (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={transactionToEdit ? 'Edit Transaction' : 'Record Transaction'}
-      description="Track cashflow accurately with integer paise precision."
+      title={
+        transactionToEdit
+          ? 'Edit Transaction'
+          : type === 'income'
+          ? 'Record Pocket Money / Income'
+          : 'Record Day-to-Day Expense'
+      }
+      description="Log student spending, canteen meals, chai, travel, or pocket money."
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -271,7 +285,7 @@ export const AddEditTransactionModal: React.FC<AddEditTransactionModalProps> = (
             type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="e.g. Swiggy, Amazon, Metro, Salary"
+            placeholder="e.g. Canteen lunch, Xerox printouts, Morning Chai, Metro fare"
             className="w-full px-3 py-2 bg-secondary/50 border border-border rounded-xl text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
           />
         </div>

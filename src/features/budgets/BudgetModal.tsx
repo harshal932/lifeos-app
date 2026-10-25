@@ -93,8 +93,8 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Monthly Budget (${monthStr})`}
-      description="Set monthly spending limits for this calendar month."
+      title={`Student Monthly Pocket Money & Budget (${monthStr})`}
+      description="Set your monthly pocket money allowance and category spending limits."
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
@@ -106,7 +106,7 @@ export const BudgetModal: React.FC<BudgetModalProps> = ({
         {/* Overall Limit */}
         <div>
           <label className="block text-xs font-semibold text-foreground mb-1.5">
-            Total Monthly Spending Limit (₹)
+            Total Monthly Pocket Money / Allowance Limit (₹)
           </label>
           <div className="relative">
             <span className="absolute left-3.5 top-2.5 text-sm font-bold text-muted-foreground">
