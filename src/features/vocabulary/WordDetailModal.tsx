@@ -79,9 +79,9 @@ export const WordDetailModal: React.FC<WordDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-background/80 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-card text-card-foreground border-t sm:border border-border/80 rounded-t-3xl sm:rounded-3xl shadow-elevated p-5 sm:p-7 max-h-[92vh] overflow-y-auto my-0 sm:my-8 animate-in slide-in-from-bottom-5 duration-200">
+      <div className="relative w-full max-w-2xl bg-card text-card-foreground border-t sm:border border-border/80 rounded-t-2xl sm:rounded-2xl shadow-elevated p-5 sm:p-6 max-h-[92vh] overflow-y-auto my-0 sm:my-8 animate-in slide-in-from-bottom-4 duration-150">
         {/* Mobile handle */}
-        <div className="sm:hidden w-12 h-1.5 bg-muted-foreground/25 rounded-full mx-auto -mt-1 mb-4" />
+        <div className="sm:hidden w-10 h-1 bg-muted-foreground/30 rounded-full mx-auto -mt-1 mb-3.5" />
 
         {/* Header */}
         <div className="flex items-start justify-between border-b border-border/50 pb-4">

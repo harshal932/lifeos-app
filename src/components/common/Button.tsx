@@ -14,27 +14,27 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const base =
-    'inline-flex items-center justify-center font-semibold transition-all duration-150 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none rounded-xl select-none';
+    'inline-flex items-center justify-center font-semibold transition-all duration-120 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none rounded-lg select-none';
 
   const variants = {
     primary:
-      'bg-primary text-primary-foreground shadow-sm hover:brightness-105 active:brightness-95 shadow-primary/20',
+      'bg-primary text-primary-foreground shadow-subtle hover:bg-primary/90 active:bg-primary/95',
     secondary:
-      'bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/90',
+      'bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border/50',
     outline:
-      'border border-border/80 bg-card/60 hover:bg-secondary/60 hover:text-foreground text-foreground active:bg-secondary',
+      'border border-border/80 bg-card hover:bg-secondary/50 hover:text-foreground text-foreground shadow-subtle',
     danger:
-      'bg-destructive/15 text-destructive hover:bg-destructive/25 border border-destructive/20 active:bg-destructive/30',
+      'bg-destructive/10 text-destructive hover:bg-destructive/20 border border-destructive/25',
     success:
-      'bg-emerald-500/15 text-emerald-500 hover:bg-emerald-500/25 border border-emerald-500/20 active:bg-emerald-500/30',
-    ghost: 'hover:bg-secondary/60 text-foreground active:bg-secondary',
+      'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/25',
+    ghost: 'hover:bg-secondary/60 text-muted-foreground hover:text-foreground',
   };
 
   const sizes = {
-    sm: 'text-xs px-3 py-1.5 h-8 gap-1.5 rounded-lg',
-    md: 'text-sm px-4 py-2.5 h-10 gap-2',
-    lg: 'text-base px-5 py-3 h-12 gap-2.5 font-bold rounded-2xl',
-    icon: 'h-10 w-10 p-0 rounded-xl',
+    sm: 'text-xs px-2.5 py-1.5 h-8 gap-1.5',
+    md: 'text-xs sm:text-sm px-3.5 py-2 h-9 sm:h-10 gap-2',
+    lg: 'text-sm sm:text-base px-4 py-2.5 h-11 gap-2.5 font-bold',
+    icon: 'h-9 w-9 p-0',
   };
 
   return (

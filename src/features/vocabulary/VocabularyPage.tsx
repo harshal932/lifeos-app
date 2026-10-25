@@ -74,59 +74,59 @@ export const VocabularyPage: React.FC<VocabularyPageProps> = ({ settings }) => {
   return (
     <div className="space-y-6 pb-20 animate-in fade-in duration-200">
       {/* Top Header */}
-      <div>
-        <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+      <div className="flex items-center gap-2 pb-2 border-b border-border/50">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
           English Vocabulary
-        </h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Master daily English words with accurate Marathi meanings, quizzes, and spaced repetition.
-        </p>
+        </h1>
+        <span className="text-[10px] bg-secondary text-muted-foreground border border-border/60 px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider">
+          Student
+        </span>
       </div>
 
       {/* Sub-navigation tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none bg-secondary/50 p-1.5 rounded-2xl border border-border/70 self-start">
+      <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none bg-secondary/60 p-1 rounded-lg border border-border/60 self-start">
         <button
           onClick={() => setActiveTab('dashboard')}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
             activeTab === 'dashboard'
-              ? 'bg-card text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-card/40'
+              ? 'bg-card text-foreground shadow-subtle'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Sparkles className="w-4 h-4 text-primary" /> Dashboard
+          <Sparkles className="w-3.5 h-3.5 text-primary" /> Daily Word
         </button>
 
         <button
           onClick={() => setActiveTab('previous')}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
             activeTab === 'previous'
-              ? 'bg-card text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-card/40'
+              ? 'bg-card text-foreground shadow-subtle'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <BookOpen className="w-4 h-4 text-indigo-400" /> Previous Words
+          <BookOpen className="w-3.5 h-3.5" /> Word Library
         </button>
 
         <button
           onClick={() => setActiveTab('quiz')}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
             activeTab === 'quiz'
-              ? 'bg-card text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-card/40'
+              ? 'bg-card text-foreground shadow-subtle'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Brain className="w-4 h-4 text-emerald-500" /> Start Quiz
+          <Brain className="w-3.5 h-3.5 text-emerald-400" /> Start Quiz
         </button>
 
         <button
           onClick={() => setActiveTab('flashcards')}
-          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold whitespace-nowrap transition-colors ${
             activeTab === 'flashcards'
-              ? 'bg-card text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-card/40'
+              ? 'bg-card text-foreground shadow-subtle'
+              : 'text-muted-foreground hover:text-foreground'
           }`}
         >
-          <Layers className="w-4 h-4 text-amber-500" /> Flashcards
+          <Layers className="w-3.5 h-3.5 text-amber-400" /> Flashcards
         </button>
       </div>
 

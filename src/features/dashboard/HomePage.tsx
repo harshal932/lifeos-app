@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Sun,
   Moon,
@@ -9,19 +9,13 @@ import {
   Wallet,
   Calendar,
   CheckCircle2,
-  TrendingUp,
-  Sparkles,
   ChevronRight,
-  Target,
-  Coins,
-  BookOpen,
+  Sparkles,
+  BookA,
   Brain,
-  Layers,
-  ArrowRight,
   ListTodo,
   Check,
-  AlertCircle,
-  Zap,
+  TrendingUp,
 } from 'lucide-react';
 import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
@@ -46,7 +40,7 @@ import { isHabitScheduledOn } from '../../utils/streaks';
 import { completeHabit, undoHabitCompletion } from '../../services/habitService';
 import { toggleTask } from '../../services/taskService';
 import { getWordOfTheDay } from '../../services/vocabService';
-import { subDays, getDaysInMonth, parseISO } from 'date-fns';
+import { subDays, getDaysInMonth } from 'date-fns';
 
 interface HomePageProps {
   habits: Habit[];
@@ -101,6 +95,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   // Tasks for today
   const todayTasks = tasks.filter((t) => t.dueDate === todayStr);
   const completedTodayTasks = todayTasks.filter((t) => t.completed);
+  const pendingTodayTasks = todayTasks.filter((t) => !t.completed);
   const todayTasksPct =
     todayTasks.length > 0
       ? Math.round((completedTodayTasks.length / todayTasks.length) * 100)
@@ -117,38 +112,21 @@ export const HomePage: React.FC<HomePageProps> = ({
   const monthCashFlow = calculateCashFlow(currentMonthTransactions);
 
   const overallBudgetPaise = budget?.overallBudgetPaise || 0;
-  const remainingBudgetPaise = overallBudgetPaise - monthCashFlow.effectiveExpensePaise;
   const daysInMonth = getDaysInMonth(today);
   const dailyTargetPaise = overallBudgetPaise > 0 ? Math.round(overallBudgetPaise / daysInMonth) : 0;
   const isOverDailyBudget = dailyTargetPaise > 0 && todayCashFlow.effectiveExpensePaise > dailyTargetPaise;
 
-  // Holdings
-  const holdings = settings.holdings;
-  const totalHoldingsPaise =
-    (holdings?.cashPaise || 0) + (holdings?.shareMarketPaise || 0) + (holdings?.savedPaise || 0);
-
-  // Weekly Overview (Last 7 Days)
+  // Weekly Consistency (Last 7 Days)
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const d = subDays(today, 6 - i);
     const dateStr = getLocalDateString(d);
-    const dayLetter = ['S', 'M', 'T', 'W', 'T', 'F', 'S'][d.getDay()];
-
     const scheduled = activeHabits.filter((h) => isHabitScheduledOn(h, dateStr)).length;
     const completed = activeHabits.filter(
       (h) =>
         isHabitScheduledOn(h, dateStr) &&
         completions.some((c) => c.habitId === h.id && c.date === dateStr)
     ).length;
-
-    const pct = scheduled > 0 ? Math.round((completed / scheduled) * 100) : 0;
-    return {
-      dateStr,
-      dayLetter,
-      scheduled,
-      completed,
-      pct,
-      isToday: dateStr === todayStr,
-    };
+    return { scheduled, completed };
   });
 
   const weeklyScheduledTotal = last7Days.reduce((acc, d) => acc + d.scheduled, 0);
@@ -158,10 +136,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       ? Math.round((weeklyCompletedTotal / weeklyScheduledTotal) * 100)
       : 100;
 
-  // Recent 3 transactions
-  const recentTransactions = [...transactions].slice(0, 3);
-
-  // Quick 1-tap complete habit
+  // Handlers
   const handleToggleHabit = async (habitId: string, isCompleted: boolean) => {
     if (isCompleted) {
       await completeHabit(habitId, todayStr);
@@ -171,7 +146,6 @@ export const HomePage: React.FC<HomePageProps> = ({
     await onRefresh();
   };
 
-  // Quick toggle task
   const handleToggleTask = async (taskId: string, isCompleted: boolean) => {
     await toggleTask(taskId, isCompleted);
     await onRefresh();
@@ -180,387 +154,339 @@ export const HomePage: React.FC<HomePageProps> = ({
   const isBrandNewUser = habits.length === 0 && transactions.length === 0 && tasks.length === 0;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      {/* 1. GREETING & HEADER */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-5 animate-in fade-in duration-200">
+      {/* 1. GREETING & TODAY'S BRIEFING HEADER */}
+      <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-border/50">
         <div>
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
+          <span className="text-xs font-medium text-muted-foreground tracking-wide block">
             {formatDisplayDate(todayStr, 'EEEE, dd MMMM yyyy')}
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2 mt-0.5">
-            {greeting} 👋
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2 mt-0.5">
+            {greeting}
           </h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {pendingTodayTasks.length > 0
+              ? `${pendingTodayTasks.length} task${pendingTodayTasks.length > 1 ? 's' : ''} pending today`
+              : 'All scheduled tasks completed for today'}
+            {' • '}
+            {completedTodayHabits.length}/{scheduledTodayHabits.length} habits done
+          </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Quick theme toggle */}
-          <button
+        <div className="flex items-center gap-2 self-start sm:self-center">
+          <Button
+            variant="outline"
+            size="sm"
             onClick={onToggleTheme}
-            className="p-2.5 rounded-2xl bg-secondary/60 hover:bg-secondary text-foreground border border-border/60 transition-all active:scale-95 shadow-subtle"
-            title="Toggle Theme"
+            className="h-8.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+            title="Toggle theme"
           >
             {settings.theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-3.5 h-3.5 text-amber-400 mr-1.5" />
             ) : (
-              <Moon className="w-4 h-4 text-indigo-500" />
+              <Moon className="w-3.5 h-3.5 text-indigo-500 mr-1.5" />
             )}
-          </button>
-        </div>
-      </div>
+            <span className="text-[11px] capitalize">{settings.theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </Button>
 
-      {/* 2. ONBOARDING CARD FOR NEW USERS */}
-      {isBrandNewUser && (
-        <Card className="p-5 bg-gradient-to-br from-primary/10 via-card to-card border-primary/30 space-y-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-bold">
-              ✨
-            </div>
-            <div>
-              <h3 className="font-bold text-foreground text-sm">Welcome to LifeOS Student Edition!</h3>
-              <p className="text-xs text-muted-foreground">
-                Your private student to-do list, day-to-day expense tracker, and study routine manager.
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 pt-1 flex-wrap">
-            <Button size="sm" onClick={onLoadSampleData}>
+          {isBrandNewUser && (
+            <Button size="sm" onClick={onLoadSampleData} className="h-8.5 text-xs font-medium">
               Load Starter Templates
             </Button>
-            {onOpenAddTask && (
-              <Button size="sm" variant="outline" onClick={onOpenAddTask}>
-                Create Today's To-Do
-              </Button>
-            )}
-            <Button size="sm" variant="outline" onClick={onOpenAddHabit}>
-              Create Study Habit
-            </Button>
-          </div>
-        </Card>
-      )}
+          )}
+        </div>
+      </section>
 
-      {/* 3. HERO OVERVIEW CARDS: TO-DOS, HABITS & DAY'S SPENDING */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        {/* Today's To-Dos Card */}
-        <Card
+      {/* 2. CONSOLIDATED OVERVIEW COCKPIT (To-Dos, Habits, Daily Spending) */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* To-Dos Overview */}
+        <div
           onClick={() => onSelectTab('tasks')}
-          className="relative overflow-hidden p-4 sm:p-5 flex flex-col justify-between group cursor-pointer hover:border-primary/60 transition-all shadow-subtle"
+          className="p-4 rounded-xl bg-card border border-border/70 hover:border-border transition-all cursor-pointer group shadow-subtle flex flex-col justify-between"
         >
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-secondary text-primary flex items-center justify-center">
                 <ListTodo className="w-4 h-4" />
               </div>
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Today's To-Dos
+              <span className="text-xs font-semibold text-muted-foreground tracking-wide">
+                Today's Tasks
               </span>
             </div>
-            <span className="text-[11px] font-bold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full border border-primary/20">
-              {todayTasksPct}% Done
+            <span className="text-[11px] font-semibold text-muted-foreground group-hover:text-foreground transition-colors flex items-center gap-0.5">
+              View <ChevronRight className="w-3 h-3" />
             </span>
           </div>
 
-          <div className="my-2">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+          <div className="my-3">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-bold tracking-tight text-foreground">
                 {completedTodayTasks.length}
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-muted-foreground">
-                / {todayTasks.length} tasks completed
+              <span className="text-xs text-muted-foreground font-medium">
+                / {todayTasks.length} completed
               </span>
             </div>
-
-            <div className="w-full h-1.5 bg-secondary rounded-full mt-2.5 overflow-hidden">
+            <div className="w-full h-1.5 bg-secondary rounded-full mt-2 overflow-hidden">
               <div
-                className="h-full bg-primary rounded-full transition-all duration-500"
+                className="h-full bg-primary rounded-full transition-all duration-300"
                 style={{ width: `${todayTasksPct}%` }}
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2.5 border-t border-border/40 text-xs">
-            <span className="text-muted-foreground font-medium text-[11px]">
-              {todayTasks.length - completedTodayTasks.length} pending today
-            </span>
-            <span className="text-primary font-semibold flex items-center gap-0.5 group-hover:translate-x-1 transition-transform text-[11px]">
-              Tasks <ChevronRight className="w-3.5 h-3.5" />
-            </span>
+          <div className="text-[11px] text-muted-foreground flex items-center justify-between pt-1">
+            <span>{pendingTodayTasks.length} pending today</span>
+            <span className="font-medium text-foreground">{todayTasksPct}%</span>
           </div>
-        </Card>
+        </div>
 
-        {/* Today's Habits Card */}
-        <Card
+        {/* Habits Overview */}
+        <div
           onClick={() => onSelectTab('habits')}
-          className="relative overflow-hidden p-4 sm:p-5 flex flex-col justify-between group cursor-pointer hover:border-emerald-500/60 transition-all shadow-subtle"
+          className="p-4 rounded-xl bg-card border border-border/70 hover:border-border transition-all cursor-pointer group shadow-subtle flex flex-col justify-between"
         >
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Habits
+              <span className="text-xs font-semibold text-muted-foreground tracking-wide">
+                Daily Habits
               </span>
             </div>
-            <span className="text-[11px] font-bold text-emerald-500 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-              {todayCompletionPct}% Done
+            <span className="text-[11px] font-semibold text-muted-foreground group-hover:text-foreground transition-colors flex items-center gap-0.5">
+              View <ChevronRight className="w-3 h-3" />
             </span>
           </div>
 
-          <div className="my-2">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+          <div className="my-3">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-bold tracking-tight text-foreground">
                 {completedTodayHabits.length}
               </span>
-              <span className="text-xs sm:text-sm font-semibold text-muted-foreground">
+              <span className="text-xs text-muted-foreground font-medium">
                 / {scheduledTodayHabits.length} routines
               </span>
             </div>
-
-            <div className="w-full h-2 bg-secondary rounded-full mt-2.5 overflow-hidden">
+            <div className="w-full h-1.5 bg-secondary rounded-full mt-2 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500"
+                className="h-full bg-emerald-500 rounded-full transition-all duration-300"
                 style={{ width: `${todayCompletionPct}%` }}
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2.5 border-t border-border/40 text-xs">
-            <span className="text-muted-foreground flex items-center gap-1 font-medium text-[11px]">
-              <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
-              {weeklyConsistency}% streak consistency
+          <div className="text-[11px] text-muted-foreground flex items-center justify-between pt-1">
+            <span className="flex items-center gap-1 font-medium">
+              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              {weeklyConsistency}% weekly consistency
             </span>
-            <span className="text-emerald-500 font-semibold flex items-center gap-0.5 group-hover:translate-x-1 transition-transform text-[11px]">
-              Habits <ChevronRight className="w-3.5 h-3.5" />
-            </span>
+            <span className="font-medium text-foreground">{todayCompletionPct}%</span>
           </div>
-        </Card>
+        </div>
 
-        {/* Day-to-Day Expense Snapshot Card */}
-        <Card
+        {/* Daily Spending Overview */}
+        <div
           onClick={() => onSelectTab('finance')}
-          className="relative overflow-hidden p-4 sm:p-5 flex flex-col justify-between group cursor-pointer hover:border-indigo-500/60 transition-all shadow-subtle"
+          className="p-4 rounded-xl bg-card border border-border/70 hover:border-border transition-all cursor-pointer group shadow-subtle flex flex-col justify-between"
         >
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-destructive/15 text-destructive flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center">
                 <Wallet className="w-4 h-4" />
               </div>
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Today's Spending
+              <span className="text-xs font-semibold text-muted-foreground tracking-wide">
+                Today's Spent
               </span>
             </div>
-            {dailyTargetPaise > 0 && (
-              <span
-                className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${
-                  isOverDailyBudget
-                    ? 'bg-rose-500/10 text-rose-400 border-rose-500/30'
-                    : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                }`}
+            {dailyTargetPaise > 0 ? (
+              <Badge
+                variant={isOverDailyBudget ? 'destructive' : 'success'}
+                className="text-[10px] px-1.5 py-0"
               >
                 {isOverDailyBudget ? 'Over Budget' : 'On Track'}
+              </Badge>
+            ) : (
+              <span className="text-[11px] font-semibold text-muted-foreground group-hover:text-foreground transition-colors flex items-center gap-0.5">
+                View <ChevronRight className="w-3 h-3" />
               </span>
             )}
           </div>
 
-          <div className="my-2">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight font-mono">
+          <div className="my-3">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-bold tracking-tight text-foreground font-mono">
                 {formatINR(todayCashFlow.effectiveExpensePaise)}
               </span>
               {todayCashFlow.totalIncomePaise > 0 && (
-                <span className="text-xs font-semibold text-emerald-500 flex items-center gap-0.5">
+                <span className="text-[11px] font-semibold text-emerald-400 flex items-center">
                   <ArrowDownLeft className="w-3 h-3" /> +{formatINR(todayCashFlow.totalIncomePaise)}
                 </span>
               )}
             </div>
-
             {dailyTargetPaise > 0 ? (
-              <div className="text-[11px] text-muted-foreground mt-1.5 flex items-center justify-between font-medium">
-                <span>Daily allowance: {formatINR(dailyTargetPaise)}</span>
-                <span className="font-mono">
-                  {Math.round((todayCashFlow.effectiveExpensePaise / dailyTargetPaise) * 100)}%
-                </span>
+              <div className="w-full h-1.5 bg-secondary rounded-full mt-2 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    isOverDailyBudget ? 'bg-rose-500' : 'bg-emerald-500'
+                  }`}
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      Math.round((todayCashFlow.effectiveExpensePaise / dailyTargetPaise) * 100)
+                    )}%`,
+                  }}
+                />
               </div>
             ) : (
-              <span className="text-[11px] text-muted-foreground mt-1 block font-medium">
-                {todayExpenses.length} expense(s) logged today
-              </span>
+              <div className="h-1.5 mt-2" />
             )}
           </div>
 
-          <div className="flex items-center justify-between pt-2.5 border-t border-border/40 text-xs">
-            <span className="text-muted-foreground font-medium text-[11px]">
-              Monthly: {formatINR(monthCashFlow.effectiveExpensePaise)}
+          <div className="text-[11px] text-muted-foreground flex items-center justify-between pt-1">
+            <span>
+              {dailyTargetPaise > 0
+                ? `Limit: ${formatINR(dailyTargetPaise)}`
+                : `${todayExpenses.length} expense(s)`}
             </span>
-            <span className="text-indigo-400 font-semibold flex items-center gap-0.5 group-hover:translate-x-1 transition-transform text-[11px]">
-              Expenses <ChevronRight className="w-3.5 h-3.5" />
-            </span>
+            <span>Monthly: {formatINR(monthCashFlow.effectiveExpensePaise)}</span>
           </div>
-        </Card>
-      </div>
+        </div>
+      </section>
 
-      {/* 4. WORD OF THE DAY FEATURED BANNER */}
-      <Card
+      {/* 3. COMPACT QUICK ACTIONS STRIP */}
+      <section className="flex items-center gap-2 overflow-x-auto pb-1 pt-0.5">
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => {
+            if (onOpenAddTask) onOpenAddTask();
+            else onSelectTab('tasks');
+          }}
+          className="shrink-0 text-xs font-semibold"
+        >
+          <Plus className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
+          Add To-Do
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onOpenAddTransaction('expense')}
+          className="shrink-0 text-xs font-semibold text-foreground hover:border-rose-500/40"
+        >
+          <ArrowUpRight className="w-3.5 h-3.5 mr-1 text-rose-400 stroke-[2.5]" />
+          Log Expense
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onOpenAddHabit}
+          className="shrink-0 text-xs font-semibold text-foreground hover:border-emerald-500/40"
+        >
+          <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-400 stroke-[2.5]" />
+          New Habit
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onSelectTab('vocabulary')}
+          className="shrink-0 text-xs font-semibold text-foreground"
+        >
+          <Brain className="w-3.5 h-3.5 mr-1 text-primary stroke-[2.5]" />
+          Vocab Quiz
+        </Button>
+      </section>
+
+      {/* 4. COMPACT WORD OF THE DAY BAR */}
+      <section
         onClick={() => onSelectTab('vocabulary')}
-        className="cursor-pointer group relative overflow-hidden p-4 sm:p-5 bg-gradient-to-br from-indigo-950/40 via-card to-card border-indigo-500/30 hover:border-indigo-500/60 transition-all duration-300"
+        className="p-3 sm:px-4 rounded-xl bg-card border border-border/70 hover:border-border cursor-pointer transition-all flex items-center justify-between gap-3 shadow-subtle group"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-1 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-                <Sparkles className="w-3 h-3" /> Word of the Day
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="w-8 h-8 rounded-lg bg-secondary text-primary flex items-center justify-center shrink-0">
+            <BookA className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                Word of the Day
               </span>
-              <span className="text-[11px] font-mono italic text-muted-foreground">
-                ({wotd.partOfSpeech})
-              </span>
-              <span className="text-[11px] font-semibold uppercase text-indigo-400/80">
-                • {wotd.difficulty}
-              </span>
-            </div>
-
-            <div className="flex items-baseline gap-2.5 pt-1">
-              <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight group-hover:text-indigo-400 transition-colors">
+              <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">
                 {wotd.word}
-              </h3>
-              <span className="text-base sm:text-lg font-bold text-amber-400 font-devanagari">
+              </span>
+              <span className="text-xs text-amber-400 font-medium font-devanagari">
                 — {wotd.marathiMeaning}
               </span>
             </div>
-
-            <p className="text-xs text-muted-foreground line-clamp-1 pt-0.5">
+            <p className="text-[11px] text-muted-foreground truncate mt-0.5">
               {wotd.meaning}
             </p>
           </div>
-
-          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-            <span className="text-xs font-semibold text-indigo-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-              Explore Vocab <ArrowRight className="w-3.5 h-3.5" />
-            </span>
-          </div>
         </div>
-      </Card>
 
-      {/* 5. QUICK-ACTION BUTTONS */}
-      <div>
-        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground block px-1 mb-2.5">
-          Quick Actions
+        <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground shrink-0 flex items-center gap-0.5">
+          Review <ChevronRight className="w-3.5 h-3.5" />
         </span>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          {/* Add Task */}
-          <button
-            onClick={() => {
-              if (onOpenAddTask) onOpenAddTask();
-              else onSelectTab('tasks');
-            }}
-            className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/70 hover:border-primary/50 hover:bg-secondary/40 transition-all active:scale-95 text-left group shadow-subtle"
-          >
-            <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-              <ListTodo className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <div>
-              <span className="text-xs font-bold text-foreground block">Add To-Do</span>
-              <span className="text-[10px] text-muted-foreground">Assignments & study</span>
-            </div>
-          </button>
+      </section>
 
-          {/* Record Expense */}
-          <button
-            onClick={() => onOpenAddTransaction('expense')}
-            className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/70 hover:border-destructive/50 hover:bg-secondary/40 transition-all active:scale-95 text-left group shadow-subtle"
-          >
-            <div className="w-10 h-10 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-              <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <div>
-              <span className="text-xs font-bold text-foreground block">Daily Expense</span>
-              <span className="text-[10px] text-muted-foreground">Canteen, chai, travel</span>
-            </div>
-          </button>
-
-          {/* Add Habit */}
-          <button
-            onClick={onOpenAddHabit}
-            className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/70 hover:border-emerald-500/50 hover:bg-secondary/40 transition-all active:scale-95 text-left group shadow-subtle"
-          >
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-              <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <div>
-              <span className="text-xs font-bold text-foreground block">Add Habit</span>
-              <span className="text-[10px] text-muted-foreground">Build routine</span>
-            </div>
-          </button>
-
-          {/* Practice Vocab Quiz */}
-          <button
-            onClick={() => onSelectTab('vocabulary')}
-            className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/70 hover:border-indigo-500/50 hover:bg-secondary/40 transition-all active:scale-95 text-left group shadow-subtle"
-          >
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-              <Brain className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <div>
-              <span className="text-xs font-bold text-foreground block">Start Quiz</span>
-              <span className="text-[10px] text-muted-foreground">Practice vocab</span>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      {/* 6. TODAY'S TASKS LIST WIDGET */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
+      {/* 5. TODAY'S TASKS LIST */}
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between px-0.5">
           <div className="flex items-center gap-2">
-            <ListTodo className="w-4 h-4 text-primary" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <ListTodo className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Today's To-Dos ({completedTodayTasks.length}/{todayTasks.length})
-            </h3>
+            </h2>
           </div>
           <button
             onClick={() => onSelectTab('tasks')}
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
+            className="text-xs font-medium text-muted-foreground hover:text-foreground flex items-center gap-0.5 transition-colors"
           >
-            View All Tasks ({tasks.length}) <ChevronRight className="w-3.5 h-3.5" />
+            All Tasks ({tasks.length}) <ChevronRight className="w-3 h-3" />
           </button>
         </div>
 
         {todayTasks.length > 0 ? (
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {todayTasks.map((t) => (
               <div
                 key={t.id}
-                className={`p-3 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+                className={`p-3 rounded-lg border transition-all flex items-center justify-between gap-3 ${
                   t.completed
-                    ? 'bg-secondary/20 border-border/40 opacity-70'
-                    : 'bg-card/70 hover:bg-card border-border/70 shadow-subtle'
+                    ? 'bg-secondary/20 border-border/30 opacity-70'
+                    : 'bg-card border-border/60 hover:border-border shadow-subtle'
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <button
                     type="button"
                     onClick={() => handleToggleTask(t.id, !t.completed)}
-                    className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 transition-all ${
+                    className={`w-4.5 h-4.5 rounded border flex items-center justify-center shrink-0 transition-colors ${
                       t.completed
                         ? 'bg-emerald-500 border-emerald-500 text-white'
-                        : 'border-muted-foreground/40 hover:border-primary'
+                        : 'border-muted-foreground/50 hover:border-primary'
                     }`}
                   >
-                    {t.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                    {t.completed && <Check className="w-3 h-3 stroke-[3]" />}
                   </button>
 
                   <div className="min-w-0 flex-1">
                     <span
-                      className={`text-sm font-semibold truncate block ${
+                      className={`text-xs sm:text-sm font-medium truncate block ${
                         t.completed ? 'line-through text-muted-foreground' : 'text-foreground'
                       }`}
                     >
                       {t.title}
                     </span>
-                    <div className="flex items-center gap-2 text-[10.5px] text-muted-foreground mt-0.5">
+                    <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
                       <span className="capitalize">{t.priority}</span>
                       <span>•</span>
                       <span>{t.category}</span>
-                      {t.dueTime && <span>• @ {t.dueTime}</span>}
+                      {t.dueTime && <span>• {t.dueTime}</span>}
                     </div>
                   </div>
                 </div>
@@ -581,45 +507,44 @@ export const HomePage: React.FC<HomePageProps> = ({
             ))}
           </div>
         ) : (
-          <Card className="p-5 text-center bg-card flex flex-col items-center justify-center">
-            <ListTodo className="w-7 h-7 text-muted-foreground/40 mb-1.5" />
-            <p className="text-xs text-muted-foreground font-medium">
-              No tasks due today. Stay ahead or add one!
-            </p>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              No tasks due today. Stay ahead or plan your next task!
+            </span>
             {onOpenAddTask && (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={onOpenAddTask}
-                className="mt-3 text-xs"
+                className="h-7 text-xs font-medium"
               >
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Today's Task
+                <Plus className="w-3 h-3 mr-1" />
+                Add Task
               </Button>
             )}
-          </Card>
+          </div>
         )}
-      </div>
+      </section>
 
-      {/* 7. TODAY'S EXPENSE TRACKER FEED WIDGET */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
+      {/* 6. TODAY'S EXPENSES FEED */}
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between px-0.5">
           <div className="flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-destructive" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Today's Day-to-Day Expenses ({todayExpenses.length}) • Total: {formatINR(todayCashFlow.effectiveExpensePaise)}
-            </h3>
+            <Wallet className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Today's Expenses ({todayExpenses.length}) • Total: {formatINR(todayCashFlow.effectiveExpensePaise)}
+            </h2>
           </div>
           <button
             onClick={() => onSelectTab('finance')}
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
+            className="text-xs font-medium text-muted-foreground hover:text-foreground flex items-center gap-0.5 transition-colors"
           >
-            Open Day Tracker <ChevronRight className="w-3.5 h-3.5" />
+            Expenses Page <ChevronRight className="w-3 h-3" />
           </button>
         </div>
 
         {todayTransactions.length > 0 ? (
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {todayTransactions.map((tx) => (
               <TransactionCard
                 key={tx.id}
@@ -629,43 +554,42 @@ export const HomePage: React.FC<HomePageProps> = ({
             ))}
           </div>
         ) : (
-          <Card className="p-5 text-center bg-card flex flex-col items-center justify-center">
-            <Wallet className="w-7 h-7 text-muted-foreground/40 mb-1.5" />
-            <p className="text-xs text-muted-foreground font-medium">
-              No expenses recorded today. Log your morning chai, canteen meal, auto fare, or xerox!
-            </p>
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
+              No expenses recorded today (canteen, chai, travel, printouts).
+            </span>
             <Button
-              variant="primary"
+              variant="outline"
               size="sm"
               onClick={() => onOpenAddTransaction('expense')}
-              className="mt-3 text-xs font-bold"
+              className="h-7 text-xs font-medium"
             >
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              Log Day's Expense
+              <Plus className="w-3 h-3 mr-1" />
+              Log Expense
             </Button>
-          </Card>
+          </div>
         )}
-      </div>
+      </section>
 
-      {/* 8. TODAY'S HABITS LIST */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
+      {/* 7. TODAY'S HABITS */}
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between px-0.5">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Today's Habits ({completedTodayHabits.length}/{scheduledTodayHabits.length})
-            </h3>
+            <CheckCircle2 className="w-4 h-4 text-muted-foreground" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Today's Routines ({completedTodayHabits.length}/{scheduledTodayHabits.length})
+            </h2>
           </div>
           <button
             onClick={() => onSelectTab('habits')}
-            className="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5"
+            className="text-xs font-medium text-muted-foreground hover:text-foreground flex items-center gap-0.5 transition-colors"
           >
-            Manage <ChevronRight className="w-3.5 h-3.5" />
+            Manage Habits <ChevronRight className="w-3 h-3" />
           </button>
         </div>
 
         {scheduledTodayHabits.length > 0 ? (
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {scheduledTodayHabits.map((h) => (
               <HabitCard
                 key={h.id}
@@ -677,16 +601,24 @@ export const HomePage: React.FC<HomePageProps> = ({
             ))}
           </div>
         ) : (
-          <Card className="p-6 text-center bg-card">
-            <Calendar className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground font-medium">
+          <div className="p-4 rounded-xl bg-card border border-border/50 text-center flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">
               {activeHabits.length === 0
-                ? 'No habits created yet. Tap "Add Habit" above to get started!'
-                : 'No habits scheduled for today. Rest or check your schedule!'}
-            </p>
-          </Card>
+                ? 'No habits created yet.'
+                : 'No habits scheduled for today.'}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onOpenAddHabit}
+              className="h-7 text-xs font-medium"
+            >
+              <Plus className="w-3 h-3 mr-1" />
+              New Habit
+            </Button>
+          </div>
         )}
-      </div>
+      </section>
     </div>
   );
 };

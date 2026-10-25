@@ -25,18 +25,18 @@ export const HoldingsCard: React.FC<HoldingsCardProps> = ({ holdings, onEdit }) 
   const savedPct = totalAmountPaise > 0 ? Math.round((savedPaise / totalAmountPaise) * 100) : 0;
 
   return (
-    <Card className="p-4 sm:p-5 bg-gradient-to-br from-card via-card to-secondary/30 border border-primary/25 shadow-elevated space-y-4">
+    <Card className="p-4 sm:p-5 border-border/70 space-y-4">
       {/* Top Header */}
       <div className="flex items-center justify-between pb-3 border-b border-border/50">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
+          <div className="w-8 h-8 rounded-lg bg-secondary text-primary flex items-center justify-center font-bold">
             <Coins className="w-4 h-4" />
           </div>
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground block">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
               Asset & Funds Overview
             </span>
-            <h3 className="text-sm font-extrabold text-foreground">Total Holdings & Net Worth</h3>
+            <h3 className="text-sm font-bold text-foreground">Holdings & Savings</h3>
           </div>
         </div>
 

@@ -8,10 +8,8 @@ import {
   AlertCircle,
   Filter,
   CheckCheck,
-  Sparkles,
-  ArrowRight,
-  TrendingUp,
   X,
+  ChevronDown,
 } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
@@ -184,162 +182,154 @@ export const TasksPage: React.FC<TasksPageProps> = ({
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-4 animate-in fade-in duration-200">
+      {/* Header Area */}
+      <section className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-border/50">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="p-1.5 rounded-xl bg-primary/10 text-primary border border-primary/20">
-              <ListTodo className="w-5 h-5" />
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
-              Student To-Do List
-              <span className="text-[10px] bg-primary/15 text-primary border border-primary/25 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                Student Edition
-              </span>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              To-Do List
             </h1>
+            <span className="text-[10px] bg-secondary text-muted-foreground border border-border/60 px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider">
+              Student
+            </span>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Track assignments, homework deadlines, exam prep, lab submissions, and daily study to-dos.
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Organize assignments, exams, homework deadlines, and daily revision.
           </p>
         </div>
 
-        {/* New Task Button */}
         <Button
           variant="primary"
+          size="sm"
           onClick={() => {
             setEditingTask(null);
             setIsModalOpen(true);
           }}
-          className="shadow-md flex items-center justify-center gap-2 self-start sm:self-auto"
+          className="self-start sm:self-auto text-xs font-semibold"
         >
-          <Plus className="w-4 h-4" />
-          <span>New To-Do</span>
+          <Plus className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
+          New To-Do
         </Button>
-      </div>
+      </section>
 
-      {/* Progress & Quick Stats Card */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Card className="p-4 bg-gradient-to-br from-card to-card/70 border-border/70 shadow-subtle">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+      {/* Unified Task Metrics Strip (No repetitive box cards) */}
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        <div className="p-3 rounded-xl bg-card border border-border/70">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
             Today's Progress
           </span>
-          <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-extrabold text-foreground">{todayProgress}%</span>
-            <span className="text-xs text-muted-foreground">
+          <div className="flex items-baseline gap-1 mt-0.5">
+            <span className="text-xl font-bold text-foreground">{todayProgress}%</span>
+            <span className="text-[11px] text-muted-foreground">
               ({todayCompleted.length}/{todayTasks.length})
             </span>
           </div>
-          <div className="w-full bg-secondary/80 h-1.5 rounded-full mt-2.5 overflow-hidden">
+          <div className="w-full bg-secondary h-1 rounded-full mt-1.5 overflow-hidden">
             <div
-              className="bg-primary h-full rounded-full transition-all duration-500"
+              className="bg-primary h-full rounded-full transition-all duration-300"
               style={{ width: `${todayProgress}%` }}
             />
           </div>
-        </Card>
+        </div>
 
-        <Card className="p-4 bg-gradient-to-br from-card to-card/70 border-border/70 shadow-subtle">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+        <div className="p-3 rounded-xl bg-card border border-border/70">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
             Due Today
           </span>
-          <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-extrabold text-foreground">{todayTasks.length}</span>
-            <span className="text-xs text-muted-foreground">to-dos</span>
+          <div className="flex items-baseline gap-1 mt-0.5">
+            <span className="text-xl font-bold text-foreground">{todayTasks.length}</span>
+            <span className="text-[11px] text-muted-foreground">tasks</span>
           </div>
-          <span className="text-[11px] text-emerald-400 font-medium block mt-1">
+          <span className="text-[10.5px] text-emerald-400 font-medium block mt-0.5">
             {todayCompleted.length} completed
           </span>
-        </Card>
+        </div>
 
-        <Card className="p-4 bg-gradient-to-br from-card to-card/70 border-border/70 shadow-subtle">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+        <div className="p-3 rounded-xl bg-card border border-border/70">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
             Assignments
           </span>
-          <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-extrabold text-foreground">{assignmentTasks.length}</span>
-            <span className="text-xs text-muted-foreground">pending</span>
+          <div className="flex items-baseline gap-1 mt-0.5">
+            <span className="text-xl font-bold text-foreground">{assignmentTasks.length}</span>
+            <span className="text-[11px] text-muted-foreground">pending</span>
           </div>
-          <span className="text-[11px] text-primary font-medium block mt-1">
-            Lab & Coursework
+          <span className="text-[10.5px] text-muted-foreground font-medium block mt-0.5">
+            Lab & coursework
           </span>
-        </Card>
+        </div>
 
-        <Card
-          className={`p-4 bg-gradient-to-br from-card to-card/70 border-border/70 shadow-subtle ${
-            overdueTasks.length > 0 ? 'border-rose-500/30' : ''
+        <div
+          className={`p-3 rounded-xl bg-card border ${
+            overdueTasks.length > 0 ? 'border-rose-500/40 bg-rose-500/[0.02]' : 'border-border/70'
           }`}
         >
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
             Overdue
           </span>
-          <div className="flex items-baseline gap-1 mt-1">
+          <div className="flex items-baseline gap-1 mt-0.5">
             <span
-              className={`text-2xl font-extrabold ${
+              className={`text-xl font-bold ${
                 overdueTasks.length > 0 ? 'text-rose-400' : 'text-foreground'
               }`}
             >
               {overdueTasks.length}
             </span>
-            <span className="text-xs text-muted-foreground">urgent</span>
+            <span className="text-[11px] text-muted-foreground">urgent</span>
           </div>
           <span
-            className={`text-[11px] font-medium block mt-1 ${
+            className={`text-[10.5px] font-medium block mt-0.5 ${
               overdueTasks.length > 0 ? 'text-rose-400' : 'text-emerald-400'
             }`}
           >
-            {overdueTasks.length > 0 ? 'Needs immediate action' : 'All caught up!'}
+            {overdueTasks.length > 0 ? 'Needs attention' : 'All caught up!'}
           </span>
-        </Card>
-      </div>
+        </div>
+      </section>
 
-      {/* Quick Add Bar for Students */}
-      <Card className="p-3 bg-secondary/30 border-border/70 shadow-subtle">
+      {/* Streamlined Quick Task Input */}
+      <section className="p-2.5 sm:p-3 rounded-xl bg-card border border-border/70 shadow-subtle">
         <form onSubmit={handleQuickAdd} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              value={quickInput}
-              onChange={(e) => setQuickInput(e.target.value)}
-              placeholder="Quick add to-do (e.g. Submit DBMS Assignment, print lab notes)... (Press Enter)"
-              className="w-full bg-background/80 border border-border rounded-xl px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary placeholder:text-muted-foreground/60 transition-all"
-            />
-          </div>
+          <input
+            type="text"
+            value={quickInput}
+            onChange={(e) => setQuickInput(e.target.value)}
+            placeholder="Add a task (e.g. Submit DBMS Assignment, print lab notes)... (Press Enter)"
+            className="flex-1 bg-secondary/40 border border-border/60 rounded-lg px-3 py-2 text-xs sm:text-sm text-foreground focus:outline-none focus:border-primary placeholder:text-muted-foreground/60 transition-colors"
+          />
 
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            {/* Category selection */}
+          <div className="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">
             <select
               value={quickCategory}
               onChange={(e) => setQuickCategory(e.target.value)}
-              className="bg-background/80 border border-border rounded-xl px-2.5 py-2.5 text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+              className="bg-secondary/40 border border-border/60 rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary cursor-pointer font-medium"
             >
               <option value="Assignments">Assignments</option>
               <option value="Exams & Quizzes">Exams & Quizzes</option>
-              <option value="Lectures & College">Lectures & College</option>
+              <option value="Lectures & College">Lectures</option>
               <option value="Self Study">Self Study</option>
               <option value="Lab & Projects">Lab & Projects</option>
-              <option value="Daily Chores">Daily Chores</option>
+              <option value="Daily Chores">Chores</option>
               <option value="General">General</option>
             </select>
 
-            {/* When selection */}
             <select
               value={quickWhen}
               onChange={(e) => setQuickWhen(e.target.value as 'today' | 'tomorrow')}
-              className="bg-background/80 border border-border rounded-xl px-2.5 py-2.5 text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+              className="bg-secondary/40 border border-border/60 rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary cursor-pointer font-medium"
             >
-              <option value="today">Due Today</option>
-              <option value="tomorrow">Due Tomorrow</option>
+              <option value="today">Today</option>
+              <option value="tomorrow">Tomorrow</option>
             </select>
 
-            {/* Priority quick toggle */}
             <select
               value={quickPriority}
               onChange={(e) => setQuickPriority(e.target.value as TaskPriority)}
-              className="bg-background/80 border border-border rounded-xl px-2.5 py-2.5 text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+              className="bg-secondary/40 border border-border/60 rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary cursor-pointer font-medium"
             >
-              <option value="low">Low Priority</option>
-              <option value="medium">Medium Priority</option>
-              <option value="high">High Priority</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
               <option value="urgent">Urgent</option>
             </select>
 
@@ -347,101 +337,104 @@ export const TasksPage: React.FC<TasksPageProps> = ({
               type="submit"
               variant="primary"
               disabled={isSubmittingQuick || !quickInput.trim()}
-              className="px-4 py-2.5 text-xs font-bold shrink-0"
+              className="h-8.5 px-3 text-xs font-semibold shrink-0"
             >
-              <Plus className="w-3.5 h-3.5 mr-1 inline" />
-              Add To-Do
+              <Plus className="w-3.5 h-3.5 mr-0.5 inline" />
+              Add
             </Button>
           </div>
         </form>
-      </Card>
+      </section>
 
-      {/* Tab Navigation & Filters */}
-      <div className="space-y-3">
-        {/* Primary Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-b border-border/60">
-          {[
-            { id: 'today' as const, label: "Today's To-Dos", count: todayTasks.length, alert: false },
-            { id: 'assignments' as const, label: 'Assignments', count: assignmentTasks.length, alert: false },
-            { id: 'exams' as const, label: 'Exams & Study', count: examTasks.length, alert: false },
-            { id: 'upcoming' as const, label: 'Upcoming', count: upcomingTasks.length, alert: false },
-            {
-              id: 'overdue' as const,
-              label: 'Overdue',
-              count: overdueTasks.length,
-              alert: overdueTasks.length > 0,
-            },
-            { id: 'all' as const, label: 'All To-Dos', count: tasks.length, alert: false },
-            { id: 'completed' as const, label: 'Completed', count: totalCompleted.length, alert: false },
-          ].map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative px-3.5 py-2 text-xs font-semibold rounded-xl transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                  isActive
-                    ? 'bg-primary/15 text-primary border border-primary/30 shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
-                }`}
-              >
-                <span>{tab.label}</span>
-                <span
-                  className={`text-[10.5px] px-1.5 py-0.2 rounded-full font-bold ${
-                    tab.alert
-                      ? 'bg-rose-500/20 text-rose-400'
-                      : isActive
-                      ? 'bg-primary/20 text-primary'
-                      : 'bg-secondary text-muted-foreground'
+      {/* Tabs and Filters */}
+      <section className="space-y-2.5">
+        <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 scrollbar-none border-b border-border/50">
+          <div className="flex items-center gap-1 shrink-0">
+            {[
+              { id: 'today' as const, label: "Today", count: todayTasks.length },
+              { id: 'assignments' as const, label: 'Assignments', count: assignmentTasks.length },
+              { id: 'exams' as const, label: 'Exams', count: examTasks.length },
+              { id: 'upcoming' as const, label: 'Upcoming', count: upcomingTasks.length },
+              {
+                id: 'overdue' as const,
+                label: 'Overdue',
+                count: overdueTasks.length,
+                isDanger: overdueTasks.length > 0,
+              },
+              { id: 'all' as const, label: 'All', count: tasks.length },
+              { id: 'completed' as const, label: 'Done', count: totalCompleted.length },
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-secondary text-foreground font-semibold border border-border/70'
+                      : tab.isDanger
+                      ? 'text-rose-400 hover:bg-rose-500/10'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary/40'
                   }`}
                 >
-                  {tab.count}
-                </span>
-              </button>
-            );
-          })}
+                  <span>{tab.label}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                      isActive
+                        ? 'bg-primary/15 text-primary'
+                        : tab.isDanger
+                        ? 'bg-rose-500/15 text-rose-400'
+                        : 'bg-secondary text-muted-foreground'
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {activeTab === 'completed' && totalCompleted.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleClearCompleted}
+              className="text-xs h-7 text-rose-400 border-rose-500/30 hover:bg-rose-500/10 shrink-0"
+            >
+              Clear Done
+            </Button>
+          )}
         </div>
 
-        {/* Filter Bar (Search, Priority, Category) */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Search Input */}
-          <div className="relative flex-1 min-w-[160px]">
-            <Search className="w-3.5 h-3.5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
+        {/* Search & Extra Filters Bar */}
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search tasks..."
-              className="w-full bg-secondary/50 border border-border/70 rounded-xl pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full bg-card border border-border/60 rounded-lg pl-8 pr-3 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary placeholder:text-muted-foreground/60 transition-colors"
             />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
           </div>
 
-          {/* Priority Filter */}
           <select
             value={selectedPriority}
             onChange={(e) => setSelectedPriority(e.target.value)}
-            className="bg-secondary/50 border border-border/70 rounded-xl px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+            className="bg-card border border-border/60 rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary cursor-pointer font-medium"
           >
             <option value="all">All Priorities</option>
-            <option value="urgent">Urgent Only</option>
-            <option value="high">High Only</option>
-            <option value="medium">Medium Only</option>
-            <option value="low">Low Only</option>
+            <option value="urgent">Urgent</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
           </select>
 
-          {/* Category Filter */}
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="bg-secondary/50 border border-border/70 rounded-xl px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+            className="bg-card border border-border/60 rounded-lg px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:border-primary cursor-pointer font-medium"
           >
             <option value="all">All Categories</option>
             {categories.map((c) => (
@@ -450,60 +443,12 @@ export const TasksPage: React.FC<TasksPageProps> = ({
               </option>
             ))}
           </select>
-
-          {/* Clear Completed Action */}
-          {activeTab === 'completed' && totalCompleted.length > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleClearCompleted}
-              className="text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border-rose-500/30"
-            >
-              Clear Completed
-            </Button>
-          )}
         </div>
-      </div>
+      </section>
 
       {/* Task List */}
-      <div className="space-y-2.5">
-        {filteredTasks.length === 0 ? (
-          <div className="p-8 text-center bg-card/40 rounded-2xl border border-dashed border-border/70 flex flex-col items-center justify-center">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-3">
-              <CheckCircle2 className="w-6 h-6 stroke-[1.8]" />
-            </div>
-            <h3 className="text-base font-semibold text-foreground">
-              {activeTab === 'today'
-                ? 'No tasks due today'
-                : activeTab === 'overdue'
-                ? 'No overdue tasks!'
-                : activeTab === 'upcoming'
-                ? 'No upcoming tasks'
-                : activeTab === 'completed'
-                ? 'No completed tasks yet'
-                : 'No tasks found'}
-            </h3>
-            <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-              {activeTab === 'today'
-                ? 'You have cleared all tasks for today or haven’t added any yet.'
-                : 'Add a new task using the quick add bar above or click New Task.'}
-            </p>
-            {activeTab === 'today' && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setEditingTask(null);
-                  setIsModalOpen(true);
-                }}
-                className="mt-4 text-xs"
-              >
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Today's Task
-              </Button>
-            )}
-          </div>
-        ) : (
+      <section className="space-y-2">
+        {filteredTasks.length > 0 ? (
           filteredTasks.map((task) => (
             <TaskCard
               key={task.id}
@@ -516,8 +461,34 @@ export const TasksPage: React.FC<TasksPageProps> = ({
               onDelete={handleDelete}
             />
           ))
+        ) : (
+          <div className="p-8 rounded-xl bg-card border border-border/60 text-center flex flex-col items-center justify-center">
+            <ListTodo className="w-8 h-8 text-muted-foreground/30 mb-2" />
+            <h4 className="text-sm font-semibold text-foreground">No tasks found</h4>
+            <p className="text-xs text-muted-foreground mt-0.5 max-w-sm">
+              {searchQuery
+                ? `No tasks matching "${searchQuery}" in this view.`
+                : activeTab === 'today'
+                ? "You have no tasks due today. All caught up!"
+                : activeTab === 'overdue'
+                ? 'Great job! You have zero overdue tasks.'
+                : 'No tasks in this category yet. Add one above!'}
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setEditingTask(null);
+                setIsModalOpen(true);
+              }}
+              className="mt-3.5 text-xs"
+            >
+              <Plus className="w-3.5 h-3.5 mr-1" />
+              Add Task
+            </Button>
+          </div>
         )}
-      </div>
+      </section>
 
       {/* Add / Edit Task Modal */}
       <AddEditTaskModal
@@ -527,9 +498,8 @@ export const TasksPage: React.FC<TasksPageProps> = ({
           setEditingTask(null);
         }}
         onSave={handleSaveModal}
-        taskToEdit={editingTask}
+        taskToEdit={editingTask || undefined}
         categories={categories}
-        defaultDate={activeTab === 'today' ? todayStr : undefined}
       />
     </div>
   );

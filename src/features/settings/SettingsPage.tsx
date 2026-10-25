@@ -200,15 +200,17 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   return (
     <div className="space-y-6 pb-20">
       {/* Top Header */}
-      <div>
-        <h2 className="text-2xl font-extrabold tracking-tight text-foreground">Settings</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Customise preferences, categories, and manage data backups.
-        </p>
+      <div className="flex items-center gap-2 pb-2 border-b border-border/50">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+          Settings & Preferences
+        </h1>
+        <span className="text-[10px] bg-secondary text-muted-foreground border border-border/60 px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider">
+          System
+        </span>
       </div>
 
       {importSuccessMsg && (
-        <div className="p-3 bg-emerald-500/15 text-emerald-500 border border-emerald-500/20 rounded-2xl text-xs font-semibold flex items-center gap-2">
+        <div className="p-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-lg text-xs font-semibold flex items-center gap-2">
           <Check className="w-4 h-4" />
           {importSuccessMsg}
         </div>

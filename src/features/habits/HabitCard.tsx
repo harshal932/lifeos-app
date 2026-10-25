@@ -46,18 +46,18 @@ export const HabitCard: React.FC<HabitCardProps> = ({
   return (
     <Card
       onClick={() => onOpenDetails(habit)}
-      className={`group relative overflow-hidden transition-all duration-200 cursor-pointer p-4 sm:p-5 ${
+      className={`group relative overflow-hidden transition-all duration-150 cursor-pointer p-3.5 sm:p-4 ${
         isCompletedToday
-          ? 'bg-emerald-500/5 dark:bg-emerald-500/[0.04] border-emerald-500/30'
-          : 'hover:border-primary/40'
+          ? 'bg-emerald-500/[0.04] border-emerald-500/30'
+          : 'hover:border-border'
       }`}
     >
       <div className="flex items-center justify-between gap-3">
         {/* Left: Category Icon, Name, Category & Streak */}
-        <div className="flex items-center gap-3.5 min-w-0 flex-1">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
           {/* Category Accent Indicator */}
           <div
-            className="w-11 h-11 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-sm font-bold text-base transition-transform group-hover:scale-105"
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-white shrink-0 font-bold text-sm shadow-subtle"
             style={{ backgroundColor: habit.color || '#6366f1' }}
           >
             {habit.name.charAt(0).toUpperCase()}
@@ -66,7 +66,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <h4
-                className={`text-base font-bold truncate transition-colors ${
+                className={`text-sm font-semibold truncate transition-colors ${
                   isCompletedToday
                     ? 'line-through text-muted-foreground'
                     : 'text-foreground group-hover:text-primary'
@@ -75,7 +75,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
                 {habit.name}
               </h4>
               {habit.isArchived && (
-                <Badge variant="outline" className="text-[10px] py-0 px-1.5">
+                <Badge variant="outline" className="text-[10px] py-0 px-1">
                   Archived
                 </Badge>
               )}
@@ -84,8 +84,8 @@ export const HabitCard: React.FC<HabitCardProps> = ({
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mt-0.5">
               <span className="font-medium text-foreground/80">{habit.category}</span>
               <span>•</span>
-              <span className="flex items-center gap-0.5 font-bold text-amber-500">
-                <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
+              <span className="flex items-center gap-0.5 font-medium text-amber-500">
+                <Flame className="w-3 h-3 fill-amber-500 text-amber-500" />
                 {streakStats.currentStreak} day streak
               </span>
               {habit.target && (
@@ -99,14 +99,14 @@ export const HabitCard: React.FC<HabitCardProps> = ({
             </div>
 
             {/* Mini 5-day consistency dots */}
-            <div className="flex items-center gap-1.5 mt-2">
+            <div className="flex items-center gap-1.5 mt-1.5">
               {last5Days.map((dot, i) => (
                 <div
                   key={i}
                   title={`${dot.dateStr}: ${dot.isDone ? 'Completed' : 'Missed'}`}
-                  className={`w-2 h-2 rounded-full transition-all ${
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${
                     dot.isDone
-                      ? 'bg-emerald-500 shadow-xs'
+                      ? 'bg-emerald-500'
                       : dot.isTodayDot
                       ? 'border border-primary/60 bg-transparent'
                       : 'bg-muted'
@@ -118,21 +118,21 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         </div>
 
         {/* Right: One-tap Completion Button */}
-        <div className="shrink-0 flex items-center pl-2">
+        <div className="shrink-0 flex items-center pl-1">
           {isScheduledToday ? (
             <button
               onClick={handleCheckboxClick}
               aria-label={`Mark ${habit.name} ${isCompletedToday ? 'incomplete' : 'complete'}`}
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90 ${
+              className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-120 active:scale-95 ${
                 isCompletedToday
-                  ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-105'
-                  : 'border-2 border-border/80 hover:border-emerald-500/60 text-transparent hover:text-emerald-500/40 bg-secondary/40'
+                  ? 'bg-emerald-500 text-white shadow-subtle'
+                  : 'border border-border/80 hover:border-emerald-500/60 text-transparent hover:text-emerald-500/40 bg-secondary/30'
               }`}
             >
-              <Check className={`w-6 h-6 stroke-[3] ${isCompletedToday ? 'opacity-100' : 'opacity-0'}`} />
+              <Check className={`w-4 h-4 stroke-[2.5] ${isCompletedToday ? 'opacity-100' : 'opacity-0'}`} />
             </button>
           ) : (
-            <span className="text-[11px] text-muted-foreground font-semibold px-2.5 py-1 rounded-xl bg-secondary/50">
+            <span className="text-[10px] text-muted-foreground font-medium px-2 py-0.5 rounded bg-secondary/50">
               Rest Day
             </span>
           )}

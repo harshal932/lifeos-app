@@ -43,21 +43,21 @@ export const StudentPocketMoneyCard: React.FC<StudentPocketMoneyCardProps> = ({
     remainingPaise > 0 ? Math.round(remainingPaise / daysRemaining) : 0;
 
   return (
-    <Card className="p-4 sm:p-5 bg-gradient-to-br from-card via-card to-primary/5 border border-primary/25 shadow-elevated space-y-4">
+    <Card className="p-4 sm:p-5 border-border/70 space-y-4">
       {/* Top Header */}
       <div className="flex items-center justify-between pb-3 border-b border-border/50">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-bold">
-            <Wallet className="w-4 h-4 stroke-[2.2]" />
+          <div className="w-8 h-8 rounded-lg bg-secondary text-primary flex items-center justify-center font-bold">
+            <Wallet className="w-4 h-4 stroke-[2]" />
           </div>
           <div>
-            <span className="text-[10.5px] font-bold uppercase tracking-wider text-primary block">
-              Student Pocket Money & Allowance
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+              Allowance & Pocket Money
             </span>
-            <h3 className="text-sm font-extrabold text-foreground flex items-center gap-1.5">
-              Monthly Allowance Wallet
+            <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+              Monthly Budget
               {effectiveAllowancePaise > 0 && (
-                <span className="text-[11px] font-semibold text-muted-foreground font-mono">
+                <span className="text-xs font-normal text-muted-foreground font-mono">
                   ({monthStr})
                 </span>
               )}
@@ -65,12 +65,12 @@ export const StudentPocketMoneyCard: React.FC<StudentPocketMoneyCardProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <Button
             variant="outline"
             size="sm"
             onClick={onOpenAddIncome}
-            className="text-xs h-8 px-2.5 gap-1.5 text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10 border-emerald-500/30"
+            className="text-xs h-7.5 px-2.5 gap-1 text-emerald-400 hover:bg-emerald-500/10 border-emerald-500/30"
           >
             <Plus className="w-3.5 h-3.5" />
             + Pocket Money
@@ -80,7 +80,7 @@ export const StudentPocketMoneyCard: React.FC<StudentPocketMoneyCardProps> = ({
             variant="outline"
             size="sm"
             onClick={onOpenBudgetModal}
-            className="text-xs h-8 px-2.5 gap-1.5 border-border/80 hover:border-primary/40"
+            className="text-xs h-7.5 px-2.5 gap-1 border-border/80"
           >
             <Edit3 className="w-3.5 h-3.5" />
             Set Limit

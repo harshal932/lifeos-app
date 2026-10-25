@@ -17,11 +17,6 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const isIncome = transaction.type === 'income';
-  const isRefund = transaction.type === 'refund';
-  const isTransfer = transaction.type === 'transfer';
-
-  // Visual cues based on type
   const typeConfig = {
     expense: {
       color: 'text-destructive',
@@ -52,25 +47,25 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
   const Icon = typeConfig.icon;
 
   return (
-    <Card className="hover:border-border/80 p-3.5 transition-all">
+    <Card className="hover:border-border p-3 transition-all">
       <div className="flex items-center justify-between gap-3">
         {/* Left: Type Icon & Details */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${typeConfig.bg}`}>
-            <Icon className="w-5 h-5 stroke-[2.2]" />
+        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${typeConfig.bg}`}>
+            <Icon className="w-4 h-4 stroke-[2]" />
           </div>
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <h4 className="text-sm font-bold text-foreground truncate">
+              <h4 className="text-xs sm:text-sm font-semibold text-foreground truncate">
                 {transaction.description || transaction.category}
               </h4>
-              <Badge variant="outline" className="text-[10px] py-0 px-1.5 shrink-0">
+              <Badge variant="outline" className="text-[10px] py-0 px-1 shrink-0">
                 {transaction.category}
               </Badge>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mt-0.5">
               <span>{formatDisplayDate(transaction.date)}</span>
               {transaction.time && <span>• {transaction.time}</span>}
               <span>•</span>
@@ -80,21 +75,18 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
         </div>
 
         {/* Right: Amount & Actions */}
-        <div className="text-right shrink-0 flex items-center gap-3">
+        <div className="text-right shrink-0 flex items-center gap-2.5">
           <div>
-            <div className={`text-base font-extrabold ${typeConfig.color}`}>
+            <div className={`text-xs sm:text-sm font-bold font-mono ${typeConfig.color}`}>
               {typeConfig.prefix}
               {formatINR(transaction.amountPaise)}
             </div>
-            <span className="text-[10px] text-muted-foreground uppercase font-semibold">
-              {transaction.type}
-            </span>
           </div>
 
-          <div className="flex items-center gap-1 border-l border-border/60 pl-2">
+          <div className="flex items-center gap-0.5 border-l border-border/60 pl-2">
             <button
               onClick={() => onEdit(transaction)}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
               title="Edit transaction"
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -102,7 +94,7 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
             {onDelete && (
               <button
                 onClick={() => onDelete(transaction.id)}
-                className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                className="p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                 title="Delete transaction"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -114,13 +106,13 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
 
       {/* Notes or Tags preview if present */}
       {(transaction.notes || (transaction.tags && transaction.tags.length > 0)) && (
-        <div className="mt-2.5 pt-2 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="mt-2 pt-1.5 border-t border-border/40 flex items-center justify-between text-[11px] text-muted-foreground">
           {transaction.notes && <p className="truncate max-w-xs italic">"{transaction.notes}"</p>}
           {transaction.tags && transaction.tags.length > 0 && (
             <div className="flex items-center gap-1 ml-auto">
               <Tag className="w-3 h-3 text-muted-foreground/60" />
               {transaction.tags.map((t) => (
-                <span key={t} className="text-[10px] bg-secondary px-1.5 py-0.5 rounded-md">
+                <span key={t} className="text-[10px] bg-secondary px-1.5 py-0.2 rounded">
                   {t}
                 </span>
               ))}

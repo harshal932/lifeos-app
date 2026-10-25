@@ -178,7 +178,7 @@ export const App: React.FC = () => {
       <Navigation currentTab={currentTab} onSelectTab={setCurrentTab} />
 
       {/* Main View Area */}
-      <main className="flex-1 w-full max-w-4xl mx-auto px-3.5 sm:px-6 pt-4 sm:pt-6 pb-24 sm:pb-12">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-24 sm:pb-12">
         {currentTab === 'home' && (
           <HomePage
             habits={habits}

@@ -31,22 +31,22 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({
   return (
     <div className="space-y-5 pb-20">
       {/* Top Header */}
-      <div>
-        <h2 className="text-2xl font-extrabold tracking-tight text-foreground">
+      <div className="flex items-center gap-2 pb-2 border-b border-border/50">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
           Analytics & Insights
-        </h2>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Objective metrics on your personal habits, focus time, and finances.
-        </p>
+        </h1>
+        <span className="text-[10px] bg-secondary text-muted-foreground border border-border/60 px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider">
+          Metrics
+        </span>
       </div>
 
       {/* Segmented Switcher */}
-      <div className="flex items-center gap-1 bg-secondary/60 p-1 rounded-2xl border border-border/60">
+      <div className="flex items-center gap-1 bg-secondary/60 p-1 rounded-lg border border-border/60">
         <button
           onClick={() => setActiveTab('finance')}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${
             activeTab === 'finance'
-              ? 'bg-card text-foreground shadow-sm'
+              ? 'bg-card text-foreground shadow-subtle'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -56,9 +56,9 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({
 
         <button
           onClick={() => setActiveTab('habits')}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${
             activeTab === 'habits'
-              ? 'bg-card text-foreground shadow-sm'
+              ? 'bg-card text-foreground shadow-subtle'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >
@@ -68,9 +68,9 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({
 
         <button
           onClick={() => setActiveTab('journal')}
-          className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-semibold transition-colors ${
             activeTab === 'journal'
-              ? 'bg-card text-foreground shadow-sm'
+              ? 'bg-card text-foreground shadow-subtle'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >

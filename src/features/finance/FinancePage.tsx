@@ -262,43 +262,57 @@ export const FinancePage: React.FC<FinancePageProps> = ({
   return (
     <div className="space-y-6 pb-24 animate-in fade-in duration-200">
       {/* 1. Header and View Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border/50">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground flex items-center gap-2">
-            Day-to-Day Life Expense Tracker
-            <span className="text-[10px] bg-primary/15 text-primary border border-primary/25 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-              Student Edition
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              Daily Expenses & Allowance
+            </h1>
+            <span className="text-[10px] bg-secondary text-muted-foreground border border-border/60 px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider">
+              Student
             </span>
-          </h2>
+          </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Log daily canteen, chai, travel, and xerox spending effortlessly with daily pocket money limits.
+            Track daily canteen, chai, travel, printouts, and pocket money limits.
           </p>
         </div>
 
-        {/* View Switcher: Daily vs Monthly */}
-        <div className="flex items-center gap-1 bg-secondary/80 p-1 rounded-2xl border border-border/70 self-start sm:self-auto shadow-subtle">
-          <button
-            onClick={() => setViewMode('daily')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              viewMode === 'daily'
-                ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* View Switcher: Daily vs Monthly */}
+          <div className="flex items-center gap-1 bg-secondary/60 p-1 rounded-lg border border-border/60 shadow-subtle">
+            <button
+              onClick={() => setViewMode('daily')}
+              className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                viewMode === 'daily'
+                  ? 'bg-card text-foreground shadow-subtle'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Daily Tracker</span>
+            </button>
+            <button
+              onClick={() => setViewMode('monthly')}
+              className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 ${
+                viewMode === 'monthly'
+                  ? 'bg-card text-foreground shadow-subtle'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <PieChart className="w-3.5 h-3.5" />
+              <span>Monthly Overview</span>
+            </button>
+          </div>
+
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => openAddModal({ type: 'expense', date: selectedDate })}
+            className="text-xs font-semibold"
           >
-            <Calendar className="w-3.5 h-3.5" />
-            <span>Daily Tracker</span>
-          </button>
-          <button
-            onClick={() => setViewMode('monthly')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-              viewMode === 'monthly'
-                ? 'bg-primary text-primary-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <PieChart className="w-3.5 h-3.5" />
-            <span>Pocket Money Overview</span>
-          </button>
+            <Plus className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
+            Log Expense
+          </Button>
         </div>
       </div>
 
@@ -997,16 +1011,7 @@ export const FinancePage: React.FC<FinancePageProps> = ({
         </div>
       )}
 
-      {/* Floating Action Button for Mobile / Fast Log */}
-      <div className="fixed bottom-20 sm:bottom-8 right-5 sm:right-8 z-30">
-        <button
-          onClick={() => openAddModal({ type: 'expense' })}
-          className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground shadow-elevated flex items-center justify-center hover:scale-105 active:scale-95 transition-all group border border-white/20"
-          title="Add Expense"
-        >
-          <Plus className="w-6 h-6 stroke-[2.5]" />
-        </button>
-      </div>
+
 
       {/* Add / Edit Transaction Modal */}
       <AddEditTransactionModal

@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 215 32% 98%;
+    --background: 215 28% 97%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -13,56 +13,56 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 238 84% 60%;
+    --primary: 243 75% 58%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 214 32% 94%;
+    --secondary: 214 25% 93%;
     --secondary-foreground: 222 47% 11%;
 
-    --muted: 214 25% 91%;
-    --muted-foreground: 215 18% 44%;
+    --muted: 214 20% 90%;
+    --muted-foreground: 215 16% 46%;
 
-    --accent: 214 32% 93%;
+    --accent: 214 25% 92%;
     --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 350 84% 56%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 28% 88%;
-    --input: 214 28% 88%;
-    --ring: 238 84% 60%;
+    --border: 214 22% 87%;
+    --input: 214 22% 87%;
+    --ring: 243 75% 58%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 224 45% 6%;
-    --foreground: 210 40% 98%;
+    --background: 222 47% 7%;
+    --foreground: 210 32% 96%;
 
-    --card: 222 44% 9%;
-    --card-foreground: 210 40% 98%;
+    --card: 222 42% 10%;
+    --card-foreground: 210 32% 96%;
 
-    --popover: 222 44% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 222 42% 10%;
+    --popover-foreground: 210 32% 96%;
 
-    --primary: 238 84% 67%;
+    --primary: 243 75% 62%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 217 33% 14%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 220 28% 15%;
+    --secondary-foreground: 210 30% 95%;
 
-    --muted: 217 33% 12%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 220 26% 13%;
+    --muted-foreground: 217 18% 62%;
 
-    --accent: 217 33% 16%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 220 26% 18%;
+    --accent-foreground: 210 30% 95%;
 
-    --destructive: 0 65% 52%;
+    --destructive: 350 80% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 217 33% 16%;
-    --input: 217 33% 16%;
-    --ring: 238 84% 67%;
+    --border: 220 25% 17%;
+    --input: 220 25% 17%;
+    --ring: 243 75% 62%;
   }
 }
 
@@ -113,38 +113,28 @@ input, textarea, select {
   padding-top: env(safe-area-inset-top, 0.5rem);
 }
 
-/* Glassmorphism utility helpers */
+/* Clean surface and navigation helpers */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
 }
 .dark .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(16, 23, 38, 0.92);
+  backdrop-filter: blur(8px);
 }
 
 .glass-nav {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.98);
 }
 .dark .glass-nav {
-  background: rgba(11, 15, 25, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Card hover glow */
-.card-glow:hover {
-  box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.15);
+  background: rgba(11, 15, 25, 0.96);
 }
 
 /* Button tactile press effect */
 .btn-tactile {
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.12s ease;
 }
 .btn-tactile:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
+

@@ -143,70 +143,77 @@ export const HabitsPage: React.FC<HabitsPageProps> = ({
   return (
     <div className="space-y-6 pb-20 animate-in fade-in duration-200">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border/50">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
-            Habit Tracker
-          </h2>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              Habit Tracker
+            </h1>
+            <span className="text-[10px] bg-secondary text-muted-foreground border border-border/60 px-1.5 py-0.2 rounded font-semibold uppercase tracking-wider">
+              Student
+            </span>
+          </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Build unshakeable daily consistency and monitor your progress.
+            Build unshakeable daily consistency and monitor your routine streaks.
           </p>
         </div>
 
         <Button
+          variant="primary"
+          size="sm"
           onClick={() => {
             setEditingHabit(null);
             setIsAddModalOpen(true);
           }}
-          className="shadow-sm font-bold gap-2 self-start sm:self-auto"
+          className="self-start sm:self-auto text-xs font-semibold"
         >
-          <Plus className="w-4 h-4 stroke-[2.5]" />
-          Add Habit
+          <Plus className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
+          New Habit
         </Button>
       </div>
 
       {/* Hero Progress Banner */}
       {activeHabits.length > 0 && activeTab !== 'archived' && (
-        <Card className="p-5 bg-gradient-to-br from-card via-card to-emerald-500/5 border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-2 flex-1">
-            <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider block">
-              Today's Progress
+        <Card className="p-4 border-border/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5 flex-1">
+            <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider block">
+              Today's Completion
             </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-foreground tracking-tight">
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-2xl font-bold text-foreground tracking-tight">
                 {completedTodayCount}
               </span>
-              <span className="text-sm font-semibold text-muted-foreground">
-                of {scheduledTodayHabits.length} habits completed today
+              <span className="text-xs font-medium text-muted-foreground">
+                of {scheduledTodayHabits.length} routines completed today
               </span>
             </div>
-            <div className="w-full max-w-md h-2 bg-secondary rounded-full overflow-hidden">
+            <div className="w-full max-w-md h-1.5 bg-secondary rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500"
+                className="h-full bg-emerald-500 rounded-full transition-all duration-300"
                 style={{ width: `${completionPercent}%` }}
               />
             </div>
           </div>
 
-          <div className="text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 border-border/40 pt-3 sm:pt-0">
-            <span className="text-3xl font-black text-emerald-500 tracking-tight">
+          <div className="text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 border-border/40 pt-2 sm:pt-0">
+            <span className="text-2xl font-bold text-emerald-400 tracking-tight">
               {completionPercent}%
             </span>
-            <span className="text-xs text-muted-foreground font-semibold">Overall Goal</span>
+            <span className="text-[11px] text-muted-foreground">Overall Goal</span>
           </div>
         </Card>
       )}
 
       {/* View Switcher Tabs & Search */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="space-y-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           {/* Sub-tabs */}
-          <div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-2xl border border-border/60 self-start">
+          <div className="flex items-center gap-1 bg-secondary/60 p-1 rounded-lg border border-border/60 self-start">
             <button
               onClick={() => setActiveTab('today')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                 activeTab === 'today'
-                  ? 'bg-card text-foreground shadow-sm'
+                  ? 'bg-card text-foreground font-semibold shadow-subtle'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -214,9 +221,9 @@ export const HabitsPage: React.FC<HabitsPageProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('weekly')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                 activeTab === 'weekly'
-                  ? 'bg-card text-foreground shadow-sm'
+                  ? 'bg-card text-foreground font-semibold shadow-subtle'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -224,9 +231,9 @@ export const HabitsPage: React.FC<HabitsPageProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('archived')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                 activeTab === 'archived'
-                  ? 'bg-card text-foreground shadow-sm'
+                  ? 'bg-card text-foreground font-semibold shadow-subtle'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -236,13 +243,13 @@ export const HabitsPage: React.FC<HabitsPageProps> = ({
 
           {/* Search bar */}
           <div className="relative flex-1 max-w-sm">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search habits..."
-              className="w-full pl-10 pr-3.5 py-2 bg-secondary/40 border border-border/70 rounded-2xl text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full pl-8 pr-3 py-1.5 bg-card border border-border/60 rounded-lg text-xs text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary transition-colors"
             />
           </div>
         </div>
@@ -253,10 +260,10 @@ export const HabitsPage: React.FC<HabitsPageProps> = ({
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
                 selectedCategory === cat
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/50'
+                  ? 'bg-secondary text-foreground font-semibold border border-border/80'
+                  : 'bg-card text-muted-foreground hover:text-foreground border border-border/50'
               }`}
             >
               {cat}
